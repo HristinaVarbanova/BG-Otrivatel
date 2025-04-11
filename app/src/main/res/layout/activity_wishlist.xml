@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Wishlist">
+
+    <FrameLayout
+        android:id="@+id/frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_view"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/top_view"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/wishlist" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/top_view"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/arc_1" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="12dp"
+                app:iconifiedByDefault="false"
+                app:searchHintIcon="@null"
+                app:queryHint="Search..."
+                app:closeIcon="@drawable/clear"
+                app:searchIcon="@drawable/search"
+                android:background="@drawable/search_bkg"
+                android:layout_below="@id/imageView"
+                android:theme="@style/CustomSearchView" />
+
+            <TextView
+                android:id="@+id/wishlist_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Wishlist"
+                android:textSize="25sp"
+                android:textColor="@color/green"
+                android:textAlignment="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_below="@id/search" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/placesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_below="@id/wishlist_text"
+                android:padding="8dp"
+                android:scrollbars="vertical"/>
+
+            <!-- New RecyclerView for search results -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchResultsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/search"
+                android:layout_marginTop="10dp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:fabCradleMargin="10dp"
+        app:fabCradleRoundedCornerRadius="50dp"
+        app:layout_behavior="com.google.android.material.bottomappbar.BottomAppBar$Behavior">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:labelVisibilityMode="labeled"
+            android:background="@android:color/transparent"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/bottom_menu" />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/camera"
+        android:importantForAccessibility="no"
+        app:maxImageSize="40dp"
+        app:tint="@color/green"
+        app:layout_anchor="@id/bottomAppBar"
+        app:layout_anchorGravity="center"
+        android:contentDescription="Open camera"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

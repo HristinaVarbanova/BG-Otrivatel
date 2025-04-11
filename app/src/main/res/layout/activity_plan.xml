@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/searchAutoComplete"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Търси обект..."
+            android:background="@drawable/search_bkg"
+            android:textSize="16sp"
+            android:textColor="@color/green"
+            android:padding="16dp"
+            android:inputType="text"
+            android:layout_marginTop="16dp"
+            android:popupTheme="@style/AutoCompleteTextViewStyle"
+            android:visibility="visible"/>
+
+
+
+        <ImageView
+            android:id="@+id/objectImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Object Name -->
+        <TextView
+            android:id="@+id/objectName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Име на обекта"
+            android:textSize="30sp"
+            android:textAlignment="center"
+            android:textColor="@color/green"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/countdownTimer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="00:00:00"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/visitDateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Изберете дата на посещение"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+    <!-- Bottom App Bar -->
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:fabCradleMargin="10dp"
+        app:fabCradleRoundedCornerRadius="50dp"
+        app:layout_behavior="com.google.android.material.bottomappbar.BottomAppBar$Behavior">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:labelVisibilityMode="labeled"
+            android:background="@android:color/transparent"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/bottom_menu" />
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/camera"
+        android:importantForAccessibility="no"
+        app:maxImageSize="40dp"
+        app:tint="@color/green"
+        app:layout_anchor="@id/bottomAppBar"
+        app:layout_anchorGravity="center"
+        android:contentDescription="Open camera" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

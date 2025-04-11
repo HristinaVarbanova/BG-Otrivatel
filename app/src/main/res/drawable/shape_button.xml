@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/white" /> <!-- Твоят желан цвят на бутона -->
+    <corners android:radius="350dp" /> <!-- Радиусът трябва да бъде половината от ширината или височината на бутона -->
+</shape>

@@ -1,0 +1,18 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Цветен заоблен фон -->
+    <item>
+        <shape>
+            <corners android:bottomRightRadius="120dp" android:bottomLeftRadius="120dp"/>
+            <solid android:color="@color/white"/>
+        </shape>
+    </item>
+
+    <!-- Изображение върху фона -->
+    <item>
+        <bitmap
+            android:src="@drawable/login"
+            android:gravity="center"/>
+    </item>
+
+</layer-list>

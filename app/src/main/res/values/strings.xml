@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Bg app</string>
+    <string name="Profile_picture">Profile picture</string>
+    <string name="profile_nickname">Nickname: loading...</string>
+    <string name="email">Email: loading...</string>
+    <string name="button1">Friends</string>
+    <string name="button2">Add Friends</string>
+    <string name="button3">Been There</string>
+    <string name="button4">Planning to go</string>
+    <string name="button5">Wishlist</string>
+    <string name="button6">Camera</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_notifications">Notifications</string>
+    <string name="nav_logout">Log out</string>
+    <string name="nav_profile">Profile</string>
+    <string name="wishlist_item1">Рилски манастир</string>
+    <string name="Invite_friend">Invite Friend</string>
+    <string name="Profile">Profile</string>
+    <string name="Name">Name: loading...</string>
+    <string name="Name1">Name</string>
+    <string name="Back_button">Back Button</string>
+    <string name="Edit">Edit Profile</string>
+    <string name="Userame">Username</string>
+    <string name="Gender">Gender</string>
+    <string name="Number">Phone number</string>
+    <string name="Email1">Email</string>
+    <string name="save">Save</string>
+    <string name="password">Password</string>
+    <string name="gender">Gender: loading...</string>
+    <string name="number">Номер: зареждане...</string>
+
+    <string-array name="gender_options">
+        <item>Мъж</item>
+        <item>Жена</item>
+    </string-array>
+    <string name="star">Stars: loading...</string>
+    <string name="dialog_beenthere">Move to Been There </string>
+    <string name="dialog_plan">Move to Plan </string>
+    <string name="dialog_delete">Delete from Wishlist </string>
+    <string name="dialog_choose">Choose an action</string>
+    <string name="add_friends_button">Add Friends</string>
+    <string name="dialog_deleteforever">Искате ли да изтриете този обект?</string>
+
+
+
+
+</resources>

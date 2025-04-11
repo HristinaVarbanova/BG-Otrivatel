@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "157631391992",
+    "firebase_url": "https://titalo1-default-rtdb.firebaseio.com",
+    "project_id": "titalo1",
+    "storage_bucket": "titalo1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157631391992:android:769ff3c6db078bd131730d",
+        "android_client_info": {
+          "package_name": "com.example.loginscreen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc6p3jRKvsHyCmLQOab5LHZiQs47r5ofo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

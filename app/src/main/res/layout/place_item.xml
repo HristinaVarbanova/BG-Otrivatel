@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@color/green">
+
+        <!-- Image of the Tourist Object -->
+        <ImageView
+            android:id="@+id/objectImage"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Tourist Object Image"
+            android:layout_centerHorizontal="true"/>
+
+        <!-- Name of the Tourist Object -->
+        <TextView
+            android:id="@+id/objectName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/objectImage"
+            android:layout_marginTop="6dp"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"/>
+
+        <!-- Invisible clickable area for long click (for the options dialog) -->
+        <RelativeLayout
+            android:id="@+id/longPressArea"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"/>
+
+        <!-- Optional buttons for interaction -->
+        <ImageView
+            android:id="@+id/beenThereButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/been_there1"
+            android:contentDescription="Move to BeenThere"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/planButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/beenThereButton"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/plan1"
+            android:contentDescription="Move to Plan"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/deleteButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/delete"
+            android:contentDescription="Delete from Wishlist"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

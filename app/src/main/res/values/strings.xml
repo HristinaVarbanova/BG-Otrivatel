@@ -1,45 +1,48 @@
 <resources>
     <string name="app_name">Bg app</string>
-    <string name="Profile_picture">Profile picture</string>
-    <string name="profile_nickname">Nickname: loading...</string>
-    <string name="email">Email: loading...</string>
-    <string name="button1">Friends</string>
-    <string name="button2">Add Friends</string>
-    <string name="button3">Been There</string>
-    <string name="button4">Planning to go</string>
-    <string name="button5">Wishlist</string>
-    <string name="button6">Camera</string>
-    <string name="nav_home">Home</string>
-    <string name="nav_notifications">Notifications</string>
-    <string name="nav_logout">Log out</string>
-    <string name="nav_profile">Profile</string>
+    <string name="Profile_picture">Профилна снимка</string>
+    <string name="profile_nickname">Потребителско име: зареждане...</string>
+    <string name="email">Имейл: зареждане...</string>
+    <string name="button1">ПРИЯТЕЛИ</string>
+    <string name="button2">ДОБАВИ ПРИЯТЕЛ</string>
+    <string name="button3">ПОСЕТЕНИ МЕСТА</string>
+    <string name="button4">ПЛАН</string>
+    <string name="button5">ЖЕЛАНИ МЕСТА</string>
+    <string name="button6">КАМЕРА</string>
+    <string name="nav_home">МЕНЮ</string>
+    <string name="nav_notifications">ИЗВЕСТИЯ</string>
+    <string name="nav_logout">ОТПИСВАНЕ</string>
+    <string name="nav_profile">ПРОФИЛ</string>
     <string name="wishlist_item1">Рилски манастир</string>
-    <string name="Invite_friend">Invite Friend</string>
-    <string name="Profile">Profile</string>
-    <string name="Name">Name: loading...</string>
-    <string name="Name1">Name</string>
-    <string name="Back_button">Back Button</string>
-    <string name="Edit">Edit Profile</string>
-    <string name="Userame">Username</string>
-    <string name="Gender">Gender</string>
-    <string name="Number">Phone number</string>
-    <string name="Email1">Email</string>
-    <string name="save">Save</string>
-    <string name="password">Password</string>
-    <string name="gender">Gender: loading...</string>
+    <string name="Invite_friend">ПОКАНИ ПРИЯТЕЛ</string>
+    <string name="Profile">ПРОФИЛ</string>
+    <string name="Name">Име: зареждане...</string>
+    <string name="Name1">Име</string>
+    <string name="Back_button">Назад</string>
+    <string name="Edit">Редактирай профил</string>
+    <string name="Userame">Потребителско име</string>
+    <string name="Gender">Пол</string>
+    <string name="Number">Тел. номер</string>
+    <string name="Email1">Имейл</string>
+    <string name="save">ЗАПАЗИ</string>
+    <string name="password">Парола</string>
+    <string name="gender">Пол: зареждане...</string>
     <string name="number">Номер: зареждане...</string>
+    <string name="galery">ГАЛЕРИЯ</string>
+
 
     <string-array name="gender_options">
         <item>Мъж</item>
         <item>Жена</item>
     </string-array>
-    <string name="star">Stars: loading...</string>
-    <string name="dialog_beenthere">Move to Been There </string>
-    <string name="dialog_plan">Move to Plan </string>
-    <string name="dialog_delete">Delete from Wishlist </string>
-    <string name="dialog_choose">Choose an action</string>
-    <string name="add_friends_button">Add Friends</string>
+    <string name="star">⭐: зареждане...</string>
+    <string name="dialog_beenthere">Премести в посетени </string>
+    <string name="dialog_plan">Премести в план </string>
+    <string name="dialog_delete">Изтрии от желани места </string>
+    <string name="dialog_choose">Избери действие</string>
+    <string name="add_friends_button">Добави приятел</string>
     <string name="dialog_deleteforever">Искате ли да изтриете този обект?</string>
+    <string name="dialog_deleteforever1">Искате ли да изтриете тази снимка?</string>
 
 
 

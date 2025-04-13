@@ -22,7 +22,7 @@
                 android:id="@+id/wishlist_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Been There"
+                android:text="@string/button3"
                 android:textSize="30sp"
                 android:textColor="@color/green"
                 android:textAlignment="center"
@@ -50,40 +50,26 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- BottomAppBar -->
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:background="@color/white"
         app:fabCradleMargin="10dp"
         app:fabCradleRoundedCornerRadius="50dp">
 
-        <!-- Навигация -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:labelVisibilityMode="labeled"
+            app:labelVisibilityMode="unlabeled"
             android:background="@android:color/transparent"
-            app:itemIconTint="@color/white"
+            app:itemIconTint="@android:color/white"
             app:itemTextColor="@color/white"
-            app:menu="@menu/bottom_menu" />
+            app:menu="@menu/bottom_menu2" />
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <!-- FAB бутон -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:layout_marginBottom="32dp"
-        android:src="@drawable/camera"
-        android:contentDescription="Камера"
-        app:maxImageSize="40dp"
-        app:tint="@color/green"
-        app:layout_anchor="@id/bottomAppBar"
-        app:layout_anchorGravity="center" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

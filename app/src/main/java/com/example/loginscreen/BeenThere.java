@@ -2,6 +2,7 @@ package com.example.loginscreen;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -16,10 +17,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BeenThere extends AppCompatActivity{
     private TextView starsTextView;
@@ -56,7 +60,6 @@ public class BeenThere extends AppCompatActivity{
         // Зареждаме обектите от Firestore
         loadVisitedObjectsFromFirestore();
 
-        FloatingActionButton fab = findViewById(R.id.floatingActionButton);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -102,43 +105,96 @@ public class BeenThere extends AppCompatActivity{
         });
     }
 
-    // Обновяване на текста със звездите
     private void updateStars() {
-        String starsText = "Stars: " + stars;
+        String starsText = "Stars ⭐: " + stars;
         starsTextView.setText(starsText);
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .update("stars", stars)
+                .addOnSuccessListener(unused -> {
+                    checkFriendsForMoreStars(userId, stars); // 👈 ново
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Грешка при запис на звезди в Firestore", Toast.LENGTH_SHORT).show();
+                });
     }
 
-    // Показване на диалогов прозорец с подробности за обекта
+    private void checkFriendsForMoreStars(String myUserId, int myStars) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(myUserId)
+                .collection("friends")
+                .get()
+                .addOnSuccessListener(friendSnapshots -> {
+                    for (var friendDoc : friendSnapshots) {
+                        String friendId = friendDoc.getId(); // UID на приятеля
+
+                        db.collection("users").document(friendId).get().addOnSuccessListener(friendSnapshot -> {
+                            Long friendStarsLong = friendSnapshot.getLong("stars");
+                            String friendName = friendSnapshot.getString("name");
+
+                            if (friendStarsLong != null && friendStarsLong > myStars) {
+                                String friendNameSafe = (friendName != null) ? friendName : "Приятел";
+                                String expectedMessage = friendNameSafe + " ви надмина по звезди 😢!";
+
+                                // 🔁 Проверка дали вече има такова известие
+                                db.collection("users")
+                                        .document(myUserId)
+                                        .collection("notifications")
+                                        .whereEqualTo("type", "star_rivalry")
+                                        .whereEqualTo("message", expectedMessage)
+                                        .get()
+                                        .addOnSuccessListener(existingNotifs -> {
+                                            if (existingNotifs.isEmpty()) {
+                                                // ✅ Няма такова – добавяме го
+                                                Map<String, Object> notification = new HashMap<>();
+                                                notification.put("message", expectedMessage);
+                                                notification.put("timestamp", FieldValue.serverTimestamp());
+                                                notification.put("type", "star_rivalry");
+
+                                                db.collection("users")
+                                                        .document(myUserId)
+                                                        .collection("notifications")
+                                                        .add(notification)
+                                                        .addOnSuccessListener(docRef -> Log.d("notif", "Добавено тестово известие"))
+                                                        .addOnFailureListener(e -> Log.e("notif", "Грешка при добавяне", e));
+                                            }
+                                        });
+                            }
+                        });
+                    }
+                });
+    }
+
+
+
     public void showPlaceDetailsDialog(TouristObject touristObject) {
-        // Вземете допълнителни данни от Firestore чрез FirestoreHelper
         firestoreHelper.loadTouristObjectDetails(touristObject.getName(), new FirestoreHelper.OnDataLoadedListener() {
             @Override
             public void onDataLoaded(TouristObject updatedTouristObject) {
                 DetailsDialogFragment dialogFragment = DetailsDialogFragment.newInstance(updatedTouristObject);
                 dialogFragment.show(getSupportFragmentManager(), "detailsDialog");
 
-                // Добавяне на обекта в колекцията "BeenThere"
                 addObjectToBeenThere(updatedTouristObject);
             }
 
             @Override
             public void onDataFailed(String errorMessage) {
-                // Ако има грешка при зареждане на данни
                 Toast.makeText(BeenThere.this, "Грешка при зареждане на данни: " + errorMessage, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onDataLoaded(List<TouristObject> touristObjects) {
-                // Празен метод, защото не го използваме в този случай
             }
         });
     }
 
-    // Добавяне на обекта в колекцията "BeenThere" в Firestore
     private void addObjectToBeenThere(TouristObject touristObject) {
         firestoreHelper.addToBeenThere(this, touristObject);
     }
-
 
     public void showDeleteDialog(TouristObject touristObject) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

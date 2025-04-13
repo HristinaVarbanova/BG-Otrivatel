@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class Profile extends AppCompatActivity {
 
@@ -28,6 +30,8 @@ public class Profile extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private ImageView profileImageView;
+    private TextView profilePhoneTextView;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,13 +47,13 @@ public class Profile extends AppCompatActivity {
         profileEmailTextView = findViewById(R.id.ProfileEmail);
         profileGenderTextView = findViewById(R.id.ProfileGender);
         profileImageView = findViewById(R.id.imageView5);
+        profilePhoneTextView = findViewById(R.id.profilePhoneTextView);
+
 
         profileImageView.setOnClickListener(v -> {
             // Извикваме метод за отваряне на галерията
             openGallery();
         });
-
-        FloatingActionButton btnCamera = findViewById(R.id.floatingActionButton);
 
         loadUserData();  // Зареждаме данните от Firestore
 
@@ -60,9 +64,9 @@ public class Profile extends AppCompatActivity {
             startActivity(intent);
         });
 
-        LinearLayout btnFriends = findViewById(R.id.btnfRiends);
-        btnFriends.setOnClickListener(v -> {
-            Intent intent = new Intent(Profile.this, Friends.class);
+        LinearLayout btnGallery = findViewById(R.id.btnGallery);
+        btnGallery.setOnClickListener(v -> {
+            Intent intent = new Intent(Profile.this, Gallery.class);
             startActivity(intent);
         });
 
@@ -99,10 +103,36 @@ public class Profile extends AppCompatActivity {
 
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
-            String imageUrl = selectedImage.toString(); // Получаваме URL на изображението
+            if (selectedImage != null) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    String userId = user.getUid();
 
-            // Извикваме метода за запис в Firestore
-            saveProfileImageUrlToFirestore(imageUrl);
+                    // Път във Firebase Storage
+                    StorageReference storageRef = FirebaseStorage.getInstance()
+                            .getReference("user-profile-photos/" + userId + "/profile.jpg");
+
+                    // Качваме снимката
+                    storageRef.putFile(selectedImage)
+                            .addOnSuccessListener(taskSnapshot -> {
+                                // Вземаме download URL
+                                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    String downloadUrl = uri.toString();
+                                    saveProfileImageUrlToFirestore(downloadUrl); // ⬅️ Запазваме го във Firestore
+
+                                    // Зареждаме в ImageView
+                                    Glide.with(this)
+                                            .load(downloadUrl)
+                                            .circleCrop()
+                                            .into(profileImageView);
+                                });
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Грешка при качване на снимка: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                            );
+                }
+            }
+
 
             // Зареждаме изображението в ImageView с помощта на Glide
             Glide.with(this)
@@ -111,8 +141,6 @@ public class Profile extends AppCompatActivity {
                     .into(profileImageView);  // Зареждаме снимката в ImageView
         }
     }
-
-    // Метод за запазване на URL на снимката в Firestore
     private void saveProfileImageUrlToFirestore(String imageUrl) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -129,7 +157,6 @@ public class Profile extends AppCompatActivity {
                     });
         }
     }
-
     private void loadUserData() {
         FirebaseUser user = auth.getCurrentUser();
         if (user != null) {
@@ -155,12 +182,9 @@ public class Profile extends AppCompatActivity {
                         profileGenderTextView.setText("Все още няма въведен пол");
                     }
 
-                    // Зареждаме телефонния номер
-                    if (phone != null && !phone.isEmpty()) {
-                        profilePhoneTextView.setText(phone); // Зареждаме телефона в TextView
-                    } else {
-                        profilePhoneTextView.setText("Няма въведен телефонен номер");
-                    }
+                    // За телефонния номер, ако е празен, ще се зададе съобщение
+                    String phoneText = (phone != null && !phone.isEmpty()) ? phone : "Няма въведен телефонен номер";
+                    profilePhoneTextView.setText(phoneText); // Зареждаме телефона в TextView
 
                     // Ако има снимка в Firestore, я зареждаме
                     if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -179,5 +203,6 @@ public class Profile extends AppCompatActivity {
             Toast.makeText(this, "Няма вписан потребител!", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 }

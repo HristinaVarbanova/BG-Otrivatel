@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -14,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,6 +35,8 @@ import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
 import android.Manifest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -41,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements AddFriend.AddFrie
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private String currentUserId;
 
+    private Uri imageUri;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +55,9 @@ public class MainActivity extends AppCompatActivity implements AddFriend.AddFrie
         Log.d("MainActivity", "MainActivity стартира успешно!");
         FirebaseFirestore.setLoggingEnabled(true);
 
-        // Инициализиране на текущия потребител
+        /*FirestoreHelper helper = new FirestoreHelper();
+        helper.addTestData();*/
+
         currentUserId = FirebaseAuth.getInstance().getCurrentUser() != null ?
                 FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
 
@@ -128,46 +137,93 @@ public class MainActivity extends AppCompatActivity implements AddFriend.AddFrie
         // Тук можеш да добавиш логика за запис в базата
     }
 
-    protected void openCamera() {
+   /* protected void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } else {
             Toast.makeText(this, "Камерата не може да бъде отворена", Toast.LENGTH_SHORT).show();
         }
+    }*/
+   private void openCamera() {
+       Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+       if (intent.resolveActivity(getPackageManager()) != null) {
+           try {
+               File photoFile = createImageFile();  // 1. Създаване на файл
+               imageUri = FileProvider.getUriForFile(
+                       this,
+                       getApplicationContext().getPackageName() + ".provider",
+                       photoFile
+               );  // 2. Генериране на URI
+
+               intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); // 3. Слагаш URI в intent-а
+               intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION); // ✅ ДАВАШ ДОСТЪП
+
+               startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);  // 4. Стартираш камерата
+           } catch (IOException e) {
+               e.printStackTrace();
+               Toast.makeText(this, "Грешка при създаване на файл", Toast.LENGTH_SHORT).show();
+           }
+       }
+   }
+
+
+    private File createImageFile() throws IOException {
+        String fileName = "IMG_" + System.currentTimeMillis();
+        File storageDir = getCacheDir();  // safe location
+        File image = File.createTempFile(fileName, ".jpg", storageDir);
+        return image;
     }
 
+
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            // Тук можеш да добавиш какво да правиш с изображението (например да го покажеш в ImageView или да го запазиш)
-            Toast.makeText(this, "Снимката е направена успешно!", Toast.LENGTH_SHORT).show();
+            Log.d("MAIN_CAMERA", "📷 Снимката е заснета: " + (imageBitmap != null));
+
+
+            if (imageBitmap != null) {
+                Log.d("MAIN_CAMERA", "✅ Успешно заснета снимка: " + imageBitmap.getWidth() + "x" + imageBitmap.getHeight());
+
+                Intent galleryIntent = new Intent(MainActivity.this, Gallery.class);
+                galleryIntent.putExtra("imageBitmap", imageBitmap);
+                startActivity(galleryIntent);
+            } else {
+                Log.e("MAIN_CAMERA", "❌ imageBitmap е null");
+            }
+        }
+    }*/
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Log.d("MAIN_CAMERA", "📷 URI: " + imageUri);
+
+            // Изпращаме URI, НЕ bitmap
+            Intent intent = new Intent(MainActivity.this, Gallery.class);
+            intent.putExtra("imageUri", imageUri.toString()); // <- предаваме като string
+            startActivity(intent);
         }
     }
 
 
 
 
-    /*private void addToBeenThere(String name, String info, String location) {
-        if (currentUserId == null) {
-            Toast.makeText(this, "Потребителят не е логнат!", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        TouristObject place = new TouristObject(name, info, location);
 
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(currentUserId)
-                .collection("beenThere")
-                .document(name)
-                .set(place)
-                .addOnSuccessListener(aVoid ->
-                        Toast.makeText(this, "Добавено в Been There!", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Грешка при добавяне: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }*/
+
+
+
+
+
+
+
+
+
 }

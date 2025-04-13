@@ -20,7 +20,7 @@
         android:id="@+id/friendStars"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Звезди: 0"
+        android:text="Звезди: 0 ⭐"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:layout_marginTop="4dp" />

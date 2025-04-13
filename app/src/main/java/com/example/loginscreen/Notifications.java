@@ -2,6 +2,7 @@ package com.example.loginscreen;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -52,6 +53,7 @@ public class Notifications extends AppCompatActivity {
     }
 
     private void loadNotifications() {
+        Log.d("NotificationCheck", "loadNotifications() стартира успешно");
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
             Toast.makeText(this, "Не сте логнати. Пренасочване...", Toast.LENGTH_SHORT).show();
@@ -65,17 +67,32 @@ public class Notifications extends AppCompatActivity {
                 .collection("users")
                 .document(currentUid)
                 .collection("notifications")
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     notificationsList.clear();
+
                     for (QueryDocumentSnapshot doc : querySnapshot) {
                         NotificationItem notif = doc.toObject(NotificationItem.class);
-                        notificationsList.add(notif);
+
+                        if (notif != null) {
+                            notif.setId(doc.getId());
+
+                            // 🐞 Лог за проверка
+                            Log.d("NotificationLoad", "Заредено известие: "
+                                    + notif.getMessage() + " | Тип: " + notif.getType());
+
+                            notificationsList.add(notif);
+                        } else {
+                            Log.w("NotificationLoad", "Неуспешно парсване на известие: " + doc.getId());
+                        }
                     }
+
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Notifications.this, "Грешка при зареждане на нотификации: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
 }

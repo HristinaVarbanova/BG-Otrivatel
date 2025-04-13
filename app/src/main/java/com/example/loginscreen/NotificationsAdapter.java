@@ -1,6 +1,7 @@
 package com.example.loginscreen;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
+
     private Context context;
     private List<NotificationItem> notifications;
 
@@ -33,20 +36,42 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         View view = LayoutInflater.from(context).inflate(R.layout.notification_item, parent, false);
         return new ViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         NotificationItem notif = notifications.get(position);
+
+        if (notif == null) {
+            holder.textView.setText("⚠️ Грешка при зареждане на известие.");
+            holder.btnAccept.setVisibility(View.GONE);
+            holder.btnDecline.setVisibility(View.GONE);
+            return;
+        }
+
+        // 📝 Показваме текста на съобщението
         holder.textView.setText(notif.getMessage());
 
+        // 🐞 Лог за проверка в Logcat
+        Log.d("NotifDebug", "TYPE: " + notif.getType() + ", STATUS: " + notif.getStatus());
+
+        // 👥 Приятелска покана
         if ("friend_request".equals(notif.getType())) {
-            holder.btnAccept.setVisibility(View.VISIBLE);
-            holder.btnDecline.setVisibility(View.VISIBLE);
-            holder.btnAccept.setOnClickListener(v -> {
-                acceptFriendRequest(notif);
-            });
-            holder.btnDecline.setOnClickListener(v -> declineFriendRequest(notif));
+            String status = notif.getStatus(); // може да е null
+
+            if ("accepted".equals(status) || "declined".equals(status)) {
+                // Ако вече е отговорено – скриваме бутоните
+                holder.btnAccept.setVisibility(View.GONE);
+                holder.btnDecline.setVisibility(View.GONE);
+            } else {
+                // Ако е pending или липсва – показваме бутоните
+                holder.btnAccept.setVisibility(View.VISIBLE);
+                holder.btnDecline.setVisibility(View.VISIBLE);
+
+                holder.btnAccept.setOnClickListener(v -> acceptFriendRequest(notif, position));
+                holder.btnDecline.setOnClickListener(v -> declineFriendRequest(notif, position));
+            }
+
         } else {
+            // 🌟 Всички други типове (например star_rivalry) — само текст, без бутони
             holder.btnAccept.setVisibility(View.GONE);
             holder.btnDecline.setVisibility(View.GONE);
         }
@@ -69,8 +94,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-
-    private void acceptFriendRequest(NotificationItem notif) {
+    private void acceptFriendRequest(NotificationItem notif, int position) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -80,26 +104,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
 
         String currentUid = auth.getCurrentUser().getUid();
-        String friendUid = notif.getFromUid(); // UID на подателя
+        String friendUid = notif.getFromUid();
 
-        if (friendUid == null || friendUid.isEmpty()) {
-            Toast.makeText(context, "Липсва UID на подателя!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // 🔄 Взимаме username и на двамата
         db.collection("users").document(friendUid).get().addOnSuccessListener(friendDoc -> {
             String friendUsername = friendDoc.getString("username");
 
             db.collection("users").document(currentUid).get().addOnSuccessListener(currentDoc -> {
                 String currentUsername = currentDoc.getString("username");
 
-                if (friendUsername == null || currentUsername == null) {
-                    Toast.makeText(context, "Грешка: липсва username!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // ✅ Данни за приятелите
                 Map<String, Object> myData = new HashMap<>();
                 myData.put("uid", currentUid);
                 myData.put("username", currentUsername);
@@ -110,10 +122,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 friendData.put("username", friendUsername);
                 friendData.put("timestamp", System.currentTimeMillis());
 
-                // 🔹 Записваме И ДВЕТЕ страни последователно и чакаме успешното приключване
+                // 🔁 Добавяме приятелство
                 db.collection("users").document(currentUid).collection("friends").document(friendUid)
                         .set(friendData)
-                        .addOnSuccessListener(aVoid1 -> {
+                        .addOnSuccessListener(aVoid -> {
                             db.collection("users").document(friendUid).collection("friends").document(currentUid)
                                     .set(myData)
                                     .addOnSuccessListener(aVoid2 -> {
@@ -122,7 +134,22 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                                                 .collection("requests").document(friendUid)
                                                 .delete();
 
-                                        // 🔔 Изпращаме нотификация
+                                        // ✅ Обновяваме текущата нотификация
+                                        String message = "Вие приехте поканата на " + friendUsername;
+                                        notif.setMessage(message);
+                                        notif.setStatus("accepted");
+
+                                        if (notif.getId() != null) {
+                                            db.collection("users").document(currentUid)
+                                                    .collection("notifications")
+                                                    .document(notif.getId())
+                                                    .set(new HashMap<String, Object>() {{
+                                                        put("message", message);
+                                                        put("status", "accepted");
+                                                    }}, SetOptions.merge());
+                                        }
+
+                                        // 🔔 Изпращаме потвърждение на другия
                                         NotificationItem confirm = new NotificationItem(
                                                 "friend_accept",
                                                 currentUsername,
@@ -132,39 +159,48 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                                         db.collection("users").document(friendUid)
                                                 .collection("notifications")
-                                                .add(confirm);
+                                                .add(confirm)
+                                                .addOnSuccessListener(docRef -> Log.d("notif", "Успешно добавена нотификация"))
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(context, "Грешка при запис: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                                });
 
-                                        // ✅ Обновяваме интерфейса
-                                        notifications.remove(notif);
-                                        notifyDataSetChanged();
-
+                                        notifyItemChanged(position);
                                         Toast.makeText(context, "Приятелството е добавено!", Toast.LENGTH_SHORT).show();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(context, "❌ Неуспех при запис към подателя: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     });
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(context, "❌ Неуспех при запис към себе си: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         });
             });
         });
     }
 
+    private void declineFriendRequest(NotificationItem notif, int position) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-
-    private void declineFriendRequest(NotificationItem notif) {
-        String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUid = auth.getCurrentUser().getUid();
         String friendUid = notif.getFromUid();
 
-        FirebaseFirestore.getInstance()
-                .collection("users").document(currentUid)
+        // 🗑 Изтриваме заявката
+        db.collection("users").document(currentUid)
                 .collection("requests").document(friendUid)
                 .delete();
 
-        notifications.remove(notif);
-        notifyDataSetChanged();
+        // 🔁 Обновяваме съобщението
+        String message = "Вие отказахте поканата на " + notif.getFrom();
+        notif.setMessage(message);
+        notif.setStatus("declined");
 
+        if (notif.getId() != null) {
+            db.collection("users").document(currentUid)
+                    .collection("notifications")
+                    .document(notif.getId())
+                    .set(new HashMap<String, Object>() {{
+                        put("message", message);
+                        put("status", "declined");
+                    }}, SetOptions.merge());
+        }
+
+        notifyItemChanged(position);
         Toast.makeText(context, "Поканата е отказана.", Toast.LENGTH_SHORT).show();
     }
 }

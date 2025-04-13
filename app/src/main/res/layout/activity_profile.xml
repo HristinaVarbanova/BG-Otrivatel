@@ -51,7 +51,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="@string/profile_nickname"
                     android:textColor="@color/green"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
                     android:layout_marginTop="16dp"/>
 
             </RelativeLayout>
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp"
+                    android:padding="7dp"
                     android:background="@color/dirtywhite"
                     android:clickable="true"
                     android:focusable="true"
@@ -85,7 +85,7 @@
 
                     <TextView
                         android:id="@+id/ProfileName"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/Name"
@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp"
+                    android:padding="7dp"
                     android:background="@color/dirtywhite"
                     android:clickable="true"
                     android:focusable="true"
@@ -113,7 +113,7 @@
 
                     <TextView
                         android:id="@+id/ProfileEmail"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/email"
@@ -126,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp"
+                    android:padding="7dp"
                     android:background="@color/dirtywhite"
                     android:clickable="true"
                     android:focusable="true"
@@ -141,7 +141,7 @@
 
                     <TextView
                         android:id="@+id/ProfileGender"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/gender"
@@ -155,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp"
+                    android:padding="7dp"
                     android:background="@color/dirtywhite"
                     android:clickable="true"
                     android:focusable="true"
@@ -170,14 +170,14 @@
 
                     <TextView
                         android:id="@+id/profilePhoneTextView"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/number"
                         android:textSize="16sp"
                         android:paddingStart="12dp"/>
-
                 </LinearLayout>
+
 
                 <LinearLayout
                     android:id="@+id/btnEditProfile"
@@ -185,7 +185,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp"
+                    android:padding="7dp"
                     android:background="@color/dirtywhite"
                     android:clickable="true"
                     android:focusable="true"
@@ -199,10 +199,10 @@
                         android:padding="4dp"/>
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="Edit Profile"
+                        android:text="РЕДАКТИРАНЕ"
                         android:textSize="16sp"
                         android:paddingStart="12dp"/>
 
@@ -212,12 +212,12 @@
                         android:src="@drawable/arrow_forward"/>
                 </LinearLayout>
                 <LinearLayout
-                    android:id="@+id/btnfRiends"
+                    android:id="@+id/btnGallery"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp"
+                    android:padding="7dp"
                     android:background="@color/dirtywhite"
                     android:clickable="true"
                     android:focusable="true"
@@ -226,15 +226,15 @@
                     <ImageView
                         android:layout_width="38dp"
                         android:layout_height="38dp"
-                        android:src="@drawable/friends"
+                        android:src="@drawable/photos"
                         android:background="@drawable/circle_bkg"
                         android:padding="4dp"/>
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="@string/button1"
+                        android:text="@string/galery"
                         android:textSize="16sp"
                         android:paddingStart="12dp"/>
 
@@ -250,7 +250,7 @@
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:background="@color/white"
         app:fabCradleMargin="10dp"
@@ -260,25 +260,13 @@
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:labelVisibilityMode="labeled"
+            app:labelVisibilityMode="unlabeled"
             android:background="@android:color/transparent"
-            app:itemIconTint="@color/white"
+            app:itemIconTint="@android:color/white"
             app:itemTextColor="@color/white"
-            app:menu="@menu/bottom_menu"/>
+            app:menu="@menu/bottom_menu2" />
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:layout_marginBottom="32dp"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/camera"
-        android:importantForAccessibility="no"
-        app:maxImageSize="40dp"
-        app:tint="@color/green"
-        app:layout_anchor="@id/bottomAppBar"
-        app:layout_anchorGravity="center" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

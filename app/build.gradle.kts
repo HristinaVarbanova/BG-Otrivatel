@@ -13,6 +13,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,12 +26,17 @@ android {
                 "proguard-rules.pro"
             )
         }
+
     }
+
+
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
 
 }
 
@@ -50,6 +56,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("androidx.work:work-runtime:2.10.0")
     implementation("com.google.guava:guava:32.1.3-android")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.google.firebase:firebase-storage:20.3.0")
+
 
 
 

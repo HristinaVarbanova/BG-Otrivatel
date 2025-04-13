@@ -1,23 +1,41 @@
 package com.example.loginscreen;
 
-public class NotificationItem {
-    private String type;      // например "friend_request"
-    private String from;      // имейл или име
-    private String fromUid;   // UID на подателя
-    private String message;   // съобщение
+import com.google.firebase.firestore.ServerTimestamp;
 
-    // Празен конструктор за Firebase
+import java.util.Date;
+
+public class NotificationItem {
+    private String type;
+    private String from;
+    private String fromUid;
+    private String message;
+    private String status;
+    private String id;
+
+    @ServerTimestamp
+    private Date timestamp;
     public NotificationItem() {}
 
-    // Конструктор с всички полета
+    public NotificationItem(String type, String from, String fromUid, String message, String status, String id) {
+        this.type = type;
+        this.from = from;
+        this.fromUid = fromUid;
+        this.message = message;
+        this.status = status;
+        this.id = id;
+    }
+
     public NotificationItem(String type, String from, String fromUid, String message) {
         this.type = type;
         this.from = from;
         this.fromUid = fromUid;
         this.message = message;
+
+        if ("friend_request".equals(type)) {
+            this.status = "pending";
+        }
     }
 
-    // Гетъри
     public String getType() {
         return type;
     }
@@ -34,8 +52,44 @@ public class NotificationItem {
         return message;
     }
 
-    // Сетър само за message, ако ти трябва
+    public String getStatus() {
+        return status;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    // ✏️ Сетъри
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public void setFromUid(String fromUid) {
+        this.fromUid = fromUid;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

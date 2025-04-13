@@ -27,7 +27,6 @@
             void onItemClick(TouristObject touristObject);
         }
 
-        // Конструктор с интерфейс за клик
         public TouristObjectsAdapter(Context context, List<TouristObject> touristObjectsList, OnItemClickListener onItemClickListener) {
             this.context = context;
             this.touristObjectsList = touristObjectsList;

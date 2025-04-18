@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.loginscreen.Model.NotificationItem;
 import com.example.loginscreen.View.Adapters.NotificationsAdapter;
 import com.example.loginscreen.R;
-import com.example.loginscreen.View.Firebase.Profile;
 import com.example.loginscreen.View.LoginSignUp.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.loginscreen.ModelView.NotificationsHelper;
+import com.example.loginscreen.ViewModel.NotificationsHelper;
 
 public class Notifications extends AppCompatActivity {
     private RecyclerView recyclerView;

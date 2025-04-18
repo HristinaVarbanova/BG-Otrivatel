@@ -21,10 +21,9 @@
     import androidx.appcompat.app.AppCompatActivity;
     import androidx.core.content.ContextCompat;
 
-    import com.example.loginscreen.ModelView.PlanHelper;
+    import com.example.loginscreen.ViewModel.PlanHelper;
     import com.example.loginscreen.R;
     import com.example.loginscreen.Model.TouristObject;
-    import com.example.loginscreen.View.Firebase.Profile;
     import com.example.loginscreen.View.LoginSignUp.LoginActivity;
     import com.google.android.material.bottomnavigation.BottomNavigationView;
     import com.google.firebase.auth.FirebaseAuth;
@@ -93,7 +92,7 @@
                 String selectedName = adapter.getItem(position);
                 for (TouristObject obj : allObjects) {
                     if (obj.getName().equals(selectedName)) {
-                        displayTouristObject(obj);  // Показваме обекта
+                        displayTouristObject(obj);
                         planHelper.addToPlan(this, obj, visitDateCalendar, () -> {
                             saveVisitTimeToPreferences(visitDateCalendar.getTimeInMillis());
                             saveLastPlannedObjectName(obj.getName());

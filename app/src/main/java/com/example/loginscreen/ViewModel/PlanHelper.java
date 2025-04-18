@@ -1,22 +1,16 @@
-package com.example.loginscreen.ModelView;
-
-import static android.content.Intent.getIntent;
+package com.example.loginscreen.ViewModel;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.loginscreen.Model.TouristObject;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PlanHelper {

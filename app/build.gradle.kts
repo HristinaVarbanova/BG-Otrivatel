@@ -49,7 +49,6 @@ dependencies {
     implementation(libs.firebase.database) // За Firebase Realtime Database
     implementation("androidx.cardview:cardview:1.0.0") // За CardView компоненти
     implementation("com.google.firebase:firebase-auth:23.2.0") // За Firebase Authentication
-    implementation("com.google.firebase:firebase-database:21.0.0") // За Firebase Database
     implementation("com.google.firebase:firebase-firestore:25.1.3")
     implementation("com.google.mlkit:image-labeling:17.0.9")
     implementation("com.squareup.picasso:picasso:2.71828")

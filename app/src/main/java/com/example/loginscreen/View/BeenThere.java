@@ -14,12 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.loginscreen.Dialogs.DetailsDialogFragment;
-import com.example.loginscreen.ModelView.BeenThereHelper;
-import com.example.loginscreen.ModelView.FirestoreHelper;
+import com.example.loginscreen.ViewModel.BeenThereHelper;
+import com.example.loginscreen.ViewModel.FirestoreHelper;
 import com.example.loginscreen.R;
 import com.example.loginscreen.Model.TouristObject;
 import com.example.loginscreen.View.Adapters.TouristObjectsAdapter;
-import com.example.loginscreen.View.Firebase.Profile;
 import com.example.loginscreen.View.LoginSignUp.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;

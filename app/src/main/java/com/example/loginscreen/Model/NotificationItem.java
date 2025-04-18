@@ -64,7 +64,6 @@ public class NotificationItem {
         return timestamp;
     }
 
-    // ✏️ Сетъри
     public void setMessage(String message) {
         this.message = message;
     }

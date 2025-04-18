@@ -11,9 +11,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.loginscreen.Model.TouristObject;
-import com.example.loginscreen.ModelView.WishlistHelper;
+import com.example.loginscreen.ViewModel.WishlistHelper;
 import com.example.loginscreen.R;
 import com.example.loginscreen.View.Plan;
 import com.example.loginscreen.View.Wishlist;
@@ -28,6 +29,7 @@ public class Options extends DialogFragment {
     private final WishlistHelper wishlistHelper = new WishlistHelper();
 
 
+
     public static Options newInstance(TouristObject touristObject) {
         Options fragment = new Options();
         Bundle args = new Bundle();
@@ -38,6 +40,7 @@ public class Options extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
         if (getArguments() != null) {
             touristObject = (TouristObject) getArguments().getSerializable("touristObject");
         }
@@ -60,7 +63,11 @@ public class Options extends DialogFragment {
 
         btnBeenThere.setOnClickListener(v -> moveToBeenThere());
         btnPlan.setOnClickListener(v -> moveToPlan());
-        btnRemove.setOnClickListener(v -> removeFromWishlist());
+        btnRemove.setOnClickListener(v -> {
+            Log.d("OptionsDialog", "btnRemove clicked");
+            removeFromWishlist();
+        });
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
@@ -82,12 +89,12 @@ public class Options extends DialogFragment {
                 .addOnSuccessListener(aVoid -> {
                     removeFromWishlist();
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), touristObject.getName() + " добавено в BeenThere", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), touristObject.getName() + " добавено в посетени", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Грешка при добавяне в BeenThere", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Грешка при добавяне в посетени", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -105,7 +112,7 @@ public class Options extends DialogFragment {
                 .set(touristObject)
                 .addOnSuccessListener(aVoid -> {
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), touristObject.getName() + " добавено в Plan", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), touristObject.getName() + " добавено в план", Toast.LENGTH_SHORT).show();
                     }
                     removeFromWishlist();
                     Intent intent = new Intent(getActivity(), Plan.class);
@@ -116,7 +123,7 @@ public class Options extends DialogFragment {
                 })
                 .addOnFailureListener(e -> {
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Грешка при добавяне в Plan", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Грешка при добавяне в план", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -133,18 +140,17 @@ public class Options extends DialogFragment {
                 .delete()
                 .addOnSuccessListener(aVoid -> {
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), touristObject.getName() + " премахнато от Wishlist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), touristObject.getName() + " премахнато от желани места", Toast.LENGTH_SHORT).show();
                     }
                     refreshWishlistUI();
                     dismiss();
                 })
                 .addOnFailureListener(e -> {
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Грешка при премахване от Wishlist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Грешка при премахване от желани места", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
 
     private void refreshWishlistUI() {
         if (isAdded() && getActivity() instanceof Wishlist) {
@@ -170,8 +176,6 @@ public class Options extends DialogFragment {
             });
         }
     }
-
-
 
 
     private String sanitizeForFirestoreId(String name) {

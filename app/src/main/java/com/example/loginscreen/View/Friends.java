@@ -10,10 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.loginscreen.Model.FriendInfo;
-import com.example.loginscreen.ModelView.FriendsHelper;
+import com.example.loginscreen.ViewModel.FriendsHelper;
 import com.example.loginscreen.R;
 import com.example.loginscreen.View.LoginSignUp.LoginActivity;
-import com.example.loginscreen.View.Firebase.Profile;
 import com.example.loginscreen.View.Adapters.FriendsAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;

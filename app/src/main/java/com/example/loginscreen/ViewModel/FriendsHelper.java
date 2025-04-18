@@ -1,4 +1,4 @@
-package com.example.loginscreen.ModelView;
+package com.example.loginscreen.ViewModel;
 
 import com.example.loginscreen.Model.FriendInfo;
 import com.google.firebase.auth.FirebaseAuth;

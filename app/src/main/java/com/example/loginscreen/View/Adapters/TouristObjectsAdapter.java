@@ -99,23 +99,4 @@
         }
 
 
-        private void addToWishlist(TouristObject obj) {
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-                Toast.makeText(context, "Трябва да сте логнати!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            firestore.collection("users")
-                    .document(userId)
-                    .collection("wishlist")
-                    .document(obj.getName())
-                    .set(obj)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(context, "Добавено в Wishlist!", Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(context, "Грешка: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        }
     }

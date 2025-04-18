@@ -1,7 +1,7 @@
 package com.example.loginscreen.Model;
 public class HelperClass {
 
-    String name, email, username,password,profileImageUrl;
+    String name, email, username,password,profileImageUrl,gender,phone;
 
     public String getName() {
         return name;
@@ -32,6 +32,22 @@ public class HelperClass {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getProfileImageUrl() {

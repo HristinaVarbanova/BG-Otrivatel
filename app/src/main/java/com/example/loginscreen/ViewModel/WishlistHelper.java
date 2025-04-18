@@ -1,4 +1,6 @@
-package com.example.loginscreen.ModelView;
+package com.example.loginscreen.ViewModel;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.loginscreen.Model.TouristObject;
 import com.google.firebase.firestore.DocumentSnapshot;

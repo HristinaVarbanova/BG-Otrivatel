@@ -12,9 +12,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.loginscreen.ModelView.EditProfileHelper;
+import com.example.loginscreen.ViewModel.EditProfileHelper;
 import com.example.loginscreen.R;
-import com.example.loginscreen.View.Firebase.Profile;
 import com.example.loginscreen.View.LoginSignUp.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

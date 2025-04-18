@@ -66,7 +66,7 @@
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
         <activity
-            android:name=".View.Firebase.Profile"
+            android:name=".View.Profile"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
         <activity
@@ -83,7 +83,7 @@
         <activity android:name=".View.Plan"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity android:name=".View.Firebase.Gallery"
+        <activity android:name=".View.Gallery"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity android:name=".View.FullscreenImageActivity"

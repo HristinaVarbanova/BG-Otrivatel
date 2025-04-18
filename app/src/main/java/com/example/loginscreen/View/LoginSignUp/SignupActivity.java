@@ -13,8 +13,6 @@ import com.example.loginscreen.R;
 import com.example.loginscreen.View.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -26,8 +24,6 @@ public class SignupActivity extends AppCompatActivity {
     TextView loginRedirectText;
     Button signupButton;
     FirebaseAuth auth;
-    FirebaseDatabase database;
-    DatabaseReference reference;
     FirebaseFirestore firestore;
 
     @Override
@@ -36,8 +32,6 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         auth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference("users");
         firestore = FirebaseFirestore.getInstance();
 
         signupName = findViewById(R.id.signup_name);
@@ -87,8 +81,6 @@ public class SignupActivity extends AppCompatActivity {
                     userData.put("name", name);
                     userData.put("email", email);
                     userData.put("username", username);
-
-                    reference.child(userId).setValue(userData);
 
                     firestore.collection("users").document(userId).set(userData)
                             .addOnSuccessListener(aVoid -> {

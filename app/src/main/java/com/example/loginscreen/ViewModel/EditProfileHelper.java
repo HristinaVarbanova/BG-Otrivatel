@@ -1,16 +1,12 @@
-package com.example.loginscreen.ModelView;
+package com.example.loginscreen.ViewModel;
 
 import android.content.Context;
-import android.widget.Toast;
 
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class EditProfileHelper {

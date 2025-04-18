@@ -13,9 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.loginscreen.View.Adapters.TouristObjectsAdapter;
 import com.example.loginscreen.Model.TouristObject;
-import com.example.loginscreen.ModelView.WishlistHelper;
+import com.example.loginscreen.ViewModel.WishlistHelper;
 import com.example.loginscreen.R;
-import com.example.loginscreen.View.Firebase.Profile;
 import com.example.loginscreen.View.LoginSignUp.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -79,7 +78,7 @@ public class Wishlist extends AppCompatActivity {
             helper.addToWishlist(currentUserId, place, new WishlistHelper.OnAddListener() {
                 @Override
                 public void onSuccess() {
-                    Toast.makeText(Wishlist.this, "Добавено в Wishlist!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Wishlist.this, "Добавено в желани места!", Toast.LENGTH_SHORT).show();
                     helper.loadWishlist(currentUserId, new WishlistHelper.OnWishlistLoadedListener() {
                         @Override
                         public void onSuccess(List<TouristObject> wishlist) {
@@ -158,12 +157,16 @@ public class Wishlist extends AppCompatActivity {
                         searchAdapter.notifyDataSetChanged();
                     }
                 });
+
+
     }
 
     public void refreshUIFromHelper(List<TouristObject> objects) {
-        touristObjectsList.clear();
-        touristObjectsList.addAll(objects);
-        adapter.notifyDataSetChanged();
+       adapter.updateList(objects);
+
     }
+
+
+
 
 }

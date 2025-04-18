@@ -69,6 +69,7 @@
                 } else if (context instanceof BeenThere) {
                     ((BeenThere) context).showDeleteDialog(touristObject);
                 }
+
                 return true;
             });
 

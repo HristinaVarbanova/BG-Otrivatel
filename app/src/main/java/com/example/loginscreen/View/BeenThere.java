@@ -45,6 +45,9 @@ public class BeenThere extends AppCompatActivity{
 
         beenThereHelper = new BeenThereHelper();
 
+        firestoreHelper = new FirestoreHelper();
+
+
         visitedObjects = new ArrayList<>();
         stars = 0;
 

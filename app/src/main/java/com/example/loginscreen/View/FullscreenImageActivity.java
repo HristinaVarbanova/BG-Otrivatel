@@ -1,10 +1,11 @@
-package com.example.loginscreen;
+package com.example.loginscreen.View;
 
 import android.os.Bundle;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.loginscreen.R;
 
 public class FullscreenImageActivity extends AppCompatActivity {
 

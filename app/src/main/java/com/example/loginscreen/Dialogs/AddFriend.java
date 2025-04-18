@@ -1,4 +1,4 @@
-package com.example.loginscreen;
+package com.example.loginscreen.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.loginscreen.Model.NotificationItem;
+import com.example.loginscreen.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,9 +30,9 @@ public class AddFriend extends DialogFragment {
     private Button inviteButton;
     private Context context;
 
-    public static AddFriend newInstance() {
+    /*public static AddFriend newInstance() {
         return new AddFriend();
-    }
+    }*/
 
     @NonNull
     @Override
@@ -67,13 +69,11 @@ public class AddFriend extends DialogFragment {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // Първо взимаме username на текущия потребител
         firestore.collection("users").document(senderUid)
                 .get()
                 .addOnSuccessListener(senderDoc -> {
                     String senderUsername = senderDoc.getString("username");
 
-                    // След това търсим получателя по въведения username
                     firestore.collection("users")
                             .whereEqualTo("username", username)
                             .get()
@@ -87,7 +87,6 @@ public class AddFriend extends DialogFragment {
                                             return;
                                         }
 
-                                        // 🔹 Създаваме заявка за приятелство
                                         Map<String, Object> request = new HashMap<>();
                                         request.put("status", "pending");
                                         request.put("senderName", senderUsername);
@@ -99,7 +98,6 @@ public class AddFriend extends DialogFragment {
                                                 .document(senderUid)
                                                 .set(request)
                                                 .addOnSuccessListener(aVoid -> {
-                                                    // 🔹 Създаваме нотификация
                                                     NotificationItem notification = new NotificationItem(
                                                             "friend_request",
                                                             senderUsername,

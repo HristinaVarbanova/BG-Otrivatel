@@ -1,16 +1,16 @@
-package com.example.loginscreen;
+package com.example.loginscreen.View.LoginSignUp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.loginscreen.R;
+import com.example.loginscreen.View.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -38,7 +38,7 @@ public class SignupActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("users");
-        firestore = FirebaseFirestore.getInstance(); // Инициализираме Firestore
+        firestore = FirebaseFirestore.getInstance();
 
         signupName = findViewById(R.id.signup_name);
         signupEmail = findViewById(R.id.signup_email);
@@ -81,18 +81,15 @@ public class SignupActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 FirebaseUser user = auth.getCurrentUser();
                 if (user != null) {
-                    String userId = user.getUid(); // Взимаме уникалното UID
+                    String userId = user.getUid();
 
-                    // Данните за запазване
                     Map<String, Object> userData = new HashMap<>();
                     userData.put("name", name);
                     userData.put("email", email);
                     userData.put("username", username);
 
-                    // ✅ Записваме в Realtime Database с UID
                     reference.child(userId).setValue(userData);
 
-                    // ✅ Записваме в Firestore с UID
                     firestore.collection("users").document(userId).set(userData)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(SignupActivity.this, "Успешна регистрация!", Toast.LENGTH_SHORT).show();

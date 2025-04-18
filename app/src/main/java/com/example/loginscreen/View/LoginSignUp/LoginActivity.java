@@ -1,6 +1,5 @@
-package com.example.loginscreen;
+package com.example.loginscreen.View.LoginSignUp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,13 +11,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.loginscreen.R;
+import com.example.loginscreen.View.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -49,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         signupRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this,SignupActivity.class);
+                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(intent);
             }
         });
@@ -91,14 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                             String uid = user.getUid();
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                            // Създай референции към под-колекции (по избор)
-                            Map<String, Object> emptyData = new HashMap<>();
+                            //Map<String, Object> emptyData = new HashMap<>();
 
-                            db.collection("users").document(uid).collection("Wishlist").add(emptyData);
-                            db.collection("users").document(uid).collection("Plan").add(emptyData);
-                            db.collection("users").document(uid).collection("BeenThere").add(emptyData);
-
-                            Log.d("LoginActivity", "Успешен вход!");
                             Toast.makeText(this, "Успешен вход!", Toast.LENGTH_SHORT).show();
 
                             startActivity(new Intent(this, MainActivity.class));
@@ -107,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         Exception e = task.getException();
                         String error = (e != null) ? e.getMessage() : "Неуспешен вход.";
-                        Log.e("LoginActivity", "Грешка при вход: " + error);
                         Toast.makeText(this, "Входът не беше успешен: " + error, Toast.LENGTH_LONG).show();
                     }
                 });

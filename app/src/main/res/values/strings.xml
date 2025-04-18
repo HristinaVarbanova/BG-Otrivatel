@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bg app</string>
+    <string name="app_name">БГ Откривател</string>
     <string name="Profile_picture">Профилна снимка</string>
     <string name="profile_nickname">Потребителско име: зареждане...</string>
     <string name="email">Имейл: зареждане...</string>

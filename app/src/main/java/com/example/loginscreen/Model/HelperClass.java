@@ -1,4 +1,4 @@
-package com.example.loginscreen;
+package com.example.loginscreen.Model;
 public class HelperClass {
 
     String name, email, username,password,profileImageUrl;

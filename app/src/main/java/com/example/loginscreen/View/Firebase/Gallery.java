@@ -1,4 +1,4 @@
-package com.example.loginscreen;
+package com.example.loginscreen.View.Firebase;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +17,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.loginscreen.View.Adapters.GalleryAdapter;
+import com.example.loginscreen.Model.ImageData;
+import com.example.loginscreen.R;
+import com.example.loginscreen.View.LoginSignUp.LoginActivity;
+import com.example.loginscreen.View.MainActivity;
+import com.example.loginscreen.View.Notifications;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -49,7 +55,6 @@ public class Gallery extends AppCompatActivity {
         imageDataList = new ArrayList<>();
         galleryAdapter = new GalleryAdapter(imageDataList);
 
-        // 👉 Галерията да показва 3 снимки в ред
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setAdapter(galleryAdapter);
 
@@ -69,10 +74,8 @@ public class Gallery extends AppCompatActivity {
             processImageFromUri(imageUri);
         }
 
-        // 🔄 Зареди снимките от Firebase
         loadUserPhotosFromFirestore();
 
-        // ⬇️ Навигация долу
         setupBottomNavigation();
         galleryAdapter.setOnImageLongClickListener((position, imageUrl) -> showDeleteDialog(position, imageUrl));
 
@@ -99,7 +102,7 @@ public class Gallery extends AppCompatActivity {
 
             } catch (IOException e) {
                 runOnUiThread(() ->
-                        Toast.makeText(this, "❌ Грешка при зареждане на изображението", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Грешка при зареждане на изображението", Toast.LENGTH_SHORT).show()
                 );
                 e.printStackTrace();
             }
@@ -119,7 +122,7 @@ public class Gallery extends AppCompatActivity {
                 .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl()
                         .addOnSuccessListener(downloadUri -> {
                             String imageUrl = downloadUri.toString();
-                            Log.d("UPLOAD", "✅ Качено в Firebase Storage: " + imageUrl);
+                            Log.d("UPLOAD", "Качено в Firebase Storage: " + imageUrl);
 
                             Map<String, Object> photoData = new HashMap<>();
                             photoData.put("uid", userId);
@@ -132,12 +135,12 @@ public class Gallery extends AppCompatActivity {
                                     .collection("photos")
                                     .add(photoData)
                                     .addOnSuccessListener(ref -> {
-                                        Log.d("FIRESTORE", "📸 Записано в Firestore");
-                                        loadUserPhotosFromFirestore(); // 🔄 Обнови списъка
+                                        Log.d("FIRESTORE", "Записано в Firestore");
+                                        loadUserPhotosFromFirestore();
                                     })
-                                    .addOnFailureListener(e -> Log.e("FIRESTORE", "❌ Firestore грешка", e));
+                                    .addOnFailureListener(e -> Log.e("FIRESTORE", "Firestore грешка", e));
                         }))
-                .addOnFailureListener(e -> Log.e("UPLOAD", "❌ Firebase Storage грешка", e));
+                .addOnFailureListener(e -> Log.e("UPLOAD", " Firebase Storage грешка", e));
     }
 
     private void loadUserPhotosFromFirestore() {
@@ -170,7 +173,7 @@ public class Gallery extends AppCompatActivity {
             fos.flush();
             return file;
         } catch (IOException e) {
-            Log.e("GALLERY", "❌ Грешка при запис на файл: " + e.getMessage());
+            Log.e("GALLERY", "Грешка при запис на файл: " + e.getMessage());
             return null;
         }
     }
@@ -193,11 +196,9 @@ public class Gallery extends AppCompatActivity {
     }
 
     private void deleteImage(int position, String imageUrl) {
-        // 🔥 Изтриване от Storage
         StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
         photoRef.delete()
                 .addOnSuccessListener(aVoid -> {
-                    // 🔥 Изтриване от Firestore
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     db.collection("users")
                             .document(userId)
@@ -218,7 +219,6 @@ public class Gallery extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Неуспешно изтриване", Toast.LENGTH_SHORT).show();
-                    Log.e("DELETE", "❌ " + e.getMessage());
                 });
     }
 

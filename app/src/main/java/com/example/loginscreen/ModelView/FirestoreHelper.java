@@ -1,16 +1,21 @@
-package com.example.loginscreen;
+package com.example.loginscreen.ModelView;
 
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.loginscreen.Model.TouristObject;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FirestoreHelper {
 
@@ -40,47 +45,6 @@ public class FirestoreHelper {
         firestore.collection("TouristObjects").document(object10.getName()).set(object10);
     }
 
-    public void addToBeenThere(Context context, TouristObject object) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(userId)
-                .collection("beenThere")
-                .document(object.getName())
-                .set(object)
-                .addOnSuccessListener(aVoid ->
-                        Toast.makeText(context, "Добавено в BeenThere!", Toast.LENGTH_SHORT).show()
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(context, "Грешка при добавяне в BeenThere", Toast.LENGTH_SHORT).show()
-                );
-    }
-
-
-    public void loadVisitedObjects(Context context, OnDataLoadedListener listener) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(userId)
-                .collection("beenThere")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<TouristObject> visitedList = new ArrayList<>();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        TouristObject obj = doc.toObject(TouristObject.class);
-                        if (obj != null) {
-                            obj.setName(doc.getId()); // ако използваш името за ID
-                            visitedList.add(obj);
-                        }
-                    }
-                    listener.onDataLoaded(visitedList);
-                })
-                .addOnFailureListener(e -> listener.onDataFailed(e.getMessage()));
-    }
-
-
     public void loadTouristObjectDetails(String objectName, final OnDataLoadedListener listener) {
         firestore.collection("TouristObjects")
                 .document(objectName)
@@ -94,81 +58,6 @@ public class FirestoreHelper {
                     }
                 });
     }
-
-    public void removeObjectFromBeenThere(Context context, TouristObject object, final OnDataLoadedListener listener) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        firestore.collection("users")
-                .document(userId)
-                .collection("beenThere")
-                .document(object.getName())
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(context, "Обектът е премахнат от BeenThere!", Toast.LENGTH_SHORT).show();
-                    listener.onDataLoaded(new ArrayList<>());
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(context, "Грешка при премахване от BeenThere!", Toast.LENGTH_SHORT).show();
-                    listener.onDataFailed("Грешка при премахване на обект от BeenThere");
-                });
-
-    }
-
-    public void addToWishlist(Context context, TouristObject object) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        firestore.collection("users")
-                .document(userId)
-                .collection("wishlist")
-                .document(object.getName())
-                .set(object)
-                .addOnSuccessListener(aVoid ->
-                        Toast.makeText(context, "Добавено в Wishlist!", Toast.LENGTH_SHORT).show()
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(context, "Грешка при добавяне в Wishlist!", Toast.LENGTH_SHORT).show()
-                );
-    }
-
-    public void addToPlan(Context context, TouristObject object) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        firestore.collection("users")
-                .document(userId)
-                .collection("plan")
-                .document(object.getName())
-                .set(object)
-                .addOnSuccessListener(aVoid ->
-                        Toast.makeText(context, "Добавено в Plan!", Toast.LENGTH_SHORT).show()
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(context, "Грешка при добавяне в Plan!", Toast.LENGTH_SHORT).show()
-                );
-    }
-
-    public void loadPlanObjects(Context context, OnDataLoadedListener listener) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        firestore.collection("users")
-                .document(userId)
-                .collection("plan")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<TouristObject> planList = new ArrayList<>();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        TouristObject obj = doc.toObject(TouristObject.class);
-                        if (obj != null) {
-                            obj.setName(doc.getId());
-                            planList.add(obj);
-                        }
-                    }
-                    listener.onDataLoaded(planList);
-                })
-                .addOnFailureListener(e -> listener.onDataFailed(e.getMessage()));
-    }
-
-
-
     public interface OnDataLoadedListener {
         void onDataLoaded(List<TouristObject> touristObjects);
         void onDataFailed(String errorMessage);

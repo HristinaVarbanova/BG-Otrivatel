@@ -1,4 +1,4 @@
-package com.example.loginscreen;
+package com.example.loginscreen.View.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.loginscreen.Model.ImageData;
+import com.example.loginscreen.R;
+import com.example.loginscreen.View.FullscreenImageActivity;
 
 import java.util.List;
 
@@ -50,7 +53,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
 
-        // 📸 Отвори на цял екран при клик
         holder.imageView.setOnClickListener(v -> {
             Intent intent = new Intent(context, FullscreenImageActivity.class);
             intent.putExtra("imageUrl", imageData.getImageUrl());

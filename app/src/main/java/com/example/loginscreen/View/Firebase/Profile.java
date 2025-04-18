@@ -1,4 +1,4 @@
-package com.example.loginscreen;
+package com.example.loginscreen.View.Firebase;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -13,8 +13,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.loginscreen.R;
+import com.example.loginscreen.View.EditProfile;
+import com.example.loginscreen.View.LoginSignUp.LoginActivity;
+import com.example.loginscreen.View.MainActivity;
+import com.example.loginscreen.View.Notifications;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -41,7 +45,6 @@ public class Profile extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Инициализация на UI елементите
         profileNickname = findViewById(R.id.textView6);
         profileNameTextView = findViewById(R.id.ProfileName);
         profileEmailTextView = findViewById(R.id.ProfileEmail);
@@ -51,13 +54,11 @@ public class Profile extends AppCompatActivity {
 
 
         profileImageView.setOnClickListener(v -> {
-            // Извикваме метод за отваряне на галерията
             openGallery();
         });
 
-        loadUserData();  // Зареждаме данните от Firestore
+        loadUserData();
 
-        // Навигация за бутоните
         LinearLayout btnEditProfile = findViewById(R.id.btnEditProfile);
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(Profile.this, EditProfile.class);
@@ -90,13 +91,11 @@ public class Profile extends AppCompatActivity {
         });
     }
 
-    // Метод за отваряне на галерията
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_IMAGE_PICK);
     }
 
-    // Метод за обработка на резултат от избора на изображение от галерията
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -107,20 +106,15 @@ public class Profile extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     String userId = user.getUid();
-
-                    // Път във Firebase Storage
                     StorageReference storageRef = FirebaseStorage.getInstance()
                             .getReference("user-profile-photos/" + userId + "/profile.jpg");
 
-                    // Качваме снимката
                     storageRef.putFile(selectedImage)
                             .addOnSuccessListener(taskSnapshot -> {
-                                // Вземаме download URL
                                 storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                     String downloadUrl = uri.toString();
-                                    saveProfileImageUrlToFirestore(downloadUrl); // ⬅️ Запазваме го във Firestore
+                                    saveProfileImageUrlToFirestore(downloadUrl);
 
-                                    // Зареждаме в ImageView
                                     Glide.with(this)
                                             .load(downloadUrl)
                                             .circleCrop()
@@ -133,12 +127,10 @@ public class Profile extends AppCompatActivity {
                 }
             }
 
-
-            // Зареждаме изображението в ImageView с помощта на Glide
             Glide.with(this)
                     .load(selectedImage)
-                    .circleCrop()  // Можем да използваме circleCrop(), за да направим изображението кръгло
-                    .into(profileImageView);  // Зареждаме снимката в ImageView
+                    .circleCrop()
+                    .into(profileImageView);
         }
     }
     private void saveProfileImageUrlToFirestore(String imageUrl) {
@@ -147,8 +139,7 @@ public class Profile extends AppCompatActivity {
             String userId = user.getUid();
             DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(userId);
 
-            // Използваме .update(), за да актуализираме само снимката
-            userRef.update("profileImageUrl", imageUrl)  // Обновяваме само URL на снимката
+            userRef.update("profileImageUrl", imageUrl)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(Profile.this, "Профилната снимка е обновена!", Toast.LENGTH_SHORT).show();
                     })
@@ -168,11 +159,10 @@ public class Profile extends AppCompatActivity {
                     String username = documentSnapshot.getString("username");
                     String name = documentSnapshot.getString("name");
                     String email = documentSnapshot.getString("email");
-                    String gender = documentSnapshot.getString("gender"); // Взимаме стойността за пола
-                    String imageUrl = documentSnapshot.getString("profileImageUrl"); // Вземаме URL на снимката от Firestore
-                    String phone = documentSnapshot.getString("phone"); // Вземаме телефонния номер от Firestore
+                    String gender = documentSnapshot.getString("gender");
+                    String imageUrl = documentSnapshot.getString("profileImageUrl");
+                    String phone = documentSnapshot.getString("phone");
 
-                    // Зареждаме информацията в UI
                     if (username != null) profileNickname.setText(username);
                     if (name != null) profileNameTextView.setText(name);
                     if (email != null) profileEmailTextView.setText(email);
@@ -182,16 +172,14 @@ public class Profile extends AppCompatActivity {
                         profileGenderTextView.setText("Все още няма въведен пол");
                     }
 
-                    // За телефонния номер, ако е празен, ще се зададе съобщение
                     String phoneText = (phone != null && !phone.isEmpty()) ? phone : "Няма въведен телефонен номер";
-                    profilePhoneTextView.setText(phoneText); // Зареждаме телефона в TextView
+                    profilePhoneTextView.setText(phoneText);
 
-                    // Ако има снимка в Firestore, я зареждаме
                     if (imageUrl != null && !imageUrl.isEmpty()) {
                         Glide.with(this)
                                 .load(imageUrl)
-                                .circleCrop()  // Поставяме снимката в кръг
-                                .into(profileImageView);  // Зареждаме снимката в ImageView
+                                .circleCrop()
+                                .into(profileImageView);
                     }
                 } else {
                     Toast.makeText(this, "Данните не са намерени!", Toast.LENGTH_SHORT).show();

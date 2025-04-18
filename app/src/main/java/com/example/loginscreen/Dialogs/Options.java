@@ -1,8 +1,9 @@
-package com.example.loginscreen;
+package com.example.loginscreen.Dialogs;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -11,12 +12,21 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.loginscreen.Model.TouristObject;
+import com.example.loginscreen.ModelView.WishlistHelper;
+import com.example.loginscreen.R;
+import com.example.loginscreen.View.Plan;
+import com.example.loginscreen.View.Wishlist;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 public class Options extends DialogFragment {
 
     private TouristObject touristObject;
+    private final WishlistHelper wishlistHelper = new WishlistHelper();
+
 
     public static Options newInstance(TouristObject touristObject) {
         Options fragment = new Options();
@@ -84,36 +94,24 @@ public class Options extends DialogFragment {
 
     private void moveToPlan() {
         if (getActivity() == null || touristObject == null) return;
-
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-
-        // 1️⃣ Добавяме време на посещение
         long visitTime = System.currentTimeMillis();
         touristObject.setVisitTime(visitTime);
-
-        // 2️⃣ Запис в "plan"
         firestore.collection("users")
                 .document(userId)
                 .collection("plan")
                 .document(sanitizeForFirestoreId(touristObject.getName()))
                 .set(touristObject)
                 .addOnSuccessListener(aVoid -> {
-                    // 3️⃣ Показваме потвърждение
                     if (isAdded()) {
                         Toast.makeText(requireContext(), touristObject.getName() + " добавено в Plan", Toast.LENGTH_SHORT).show();
                     }
-
-                    // 4️⃣ Премахваме от wishlist
                     removeFromWishlist();
-
-                    // 5️⃣ Стартираме Plan activity и подаваме името и времето
                     Intent intent = new Intent(getActivity(), Plan.class);
                     intent.putExtra("objectName", touristObject.getName());
                     intent.putExtra("visitTime", visitTime);
                     startActivity(intent);
-
-                    // 6️⃣ Затваряме диалога
                     dismiss();
                 })
                 .addOnFailureListener(e -> {
@@ -124,7 +122,7 @@ public class Options extends DialogFragment {
     }
 
 
-    private void removeFromWishlist() {
+   private void removeFromWishlist() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
@@ -147,11 +145,34 @@ public class Options extends DialogFragment {
                 });
     }
 
+
     private void refreshWishlistUI() {
-        if (getActivity() instanceof Wishlist) {
-            ((Wishlist) getActivity()).loadWishlist();
+        if (isAdded() && getActivity() instanceof Wishlist) {
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            WishlistHelper helper = new WishlistHelper();
+            helper.loadWishlist(userId, new WishlistHelper.OnWishlistLoadedListener() {
+                @Override
+                public void onSuccess(List<TouristObject> objects) {
+                    if (isAdded() && getActivity() instanceof Wishlist) {
+                        ((Wishlist) getActivity()).refreshUIFromHelper(objects);
+                    } else {
+                        Log.e("Options", "Activity е null или не е Wishlist");
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), "Грешка при зареждане: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
+
+
+
 
     private String sanitizeForFirestoreId(String name) {
         return name.replaceAll("[.#\\$\\[\\]/]", "_");

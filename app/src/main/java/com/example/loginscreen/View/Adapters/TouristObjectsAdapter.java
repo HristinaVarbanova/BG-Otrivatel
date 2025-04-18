@@ -1,4 +1,4 @@
-    package com.example.loginscreen;
+    package com.example.loginscreen.View.Adapters;
 
     import android.content.Context;
     import android.view.LayoutInflater;
@@ -11,6 +11,11 @@
     import androidx.annotation.NonNull;
     import androidx.recyclerview.widget.RecyclerView;
 
+    import com.example.loginscreen.Dialogs.Options;
+    import com.example.loginscreen.R;
+    import com.example.loginscreen.Model.TouristObject;
+    import com.example.loginscreen.View.BeenThere;
+    import com.example.loginscreen.View.Wishlist;
     import com.google.firebase.auth.FirebaseAuth;
     import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -22,7 +27,6 @@
         private OnItemClickListener onItemClickListener;
         private FirebaseFirestore firestore;
 
-        // Интерфейс за клик
         public interface OnItemClickListener {
             void onItemClick(TouristObject touristObject);
         }
@@ -49,17 +53,15 @@
             if (imageResId != 0) {
                 holder.objectImage.setImageResource(imageResId);
             } else {
-                holder.objectImage.setImageResource(R.drawable.default_image); // резервно изображение
+                holder.objectImage.setImageResource(R.drawable.default_image);
             }
 
-            // Настройка на клик събитие
             holder.itemView.setOnClickListener(v -> {
-                onItemClickListener.onItemClick(touristObject);
-                // Добавяне на обект в плана, когато е кликнат
-                addToWishlist(touristObject);
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(touristObject);
+                }
             });
 
-            // Продължителен клик за показване на диалоговия прозорец с опции
             holder.itemView.setOnLongClickListener(v -> {
                 if (context instanceof Wishlist) {
                     Options optionsDialog = Options.newInstance(touristObject);
@@ -69,6 +71,8 @@
                 }
                 return true;
             });
+
+
 
         }
 
@@ -88,25 +92,23 @@
             }
         }
 
-        // Метод за обновяване на списъка в адаптера
         public void updateList(List<TouristObject> newList) {
             touristObjectsList = newList;
-            notifyDataSetChanged(); // Принуждаваме RecyclerView да се обнови
+            notifyDataSetChanged();
         }
 
 
-        // Метод за добавяне на обект в Wishlist
         private void addToWishlist(TouristObject obj) {
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                 Toast.makeText(context, "Трябва да сте логнати!", Toast.LENGTH_SHORT).show();
                 return;
-            }// Реален потребителски ID
+            }
 
             firestore.collection("users")
                     .document(userId)
                     .collection("wishlist")
-                    .document(obj.getName()) // Използва името като document ID
+                    .document(obj.getName())
                     .set(obj)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(context, "Добавено в Wishlist!", Toast.LENGTH_SHORT).show();

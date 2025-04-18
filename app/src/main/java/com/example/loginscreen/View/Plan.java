@@ -1,11 +1,10 @@
-    package com.example.loginscreen;
+    package com.example.loginscreen.View;
 
     import android.app.DatePickerDialog;
     import android.content.Intent;
     import android.content.SharedPreferences;
     import android.os.Bundle;
     import android.os.Handler;
-    import android.provider.Settings;
     import android.util.Log;
     import android.view.LayoutInflater;
     import android.view.View;
@@ -18,12 +17,15 @@
     import android.widget.Toast;
 
     import androidx.appcompat.app.AlertDialog;
-    import androidx.work.OneTimeWorkRequest;
-    import androidx.work.WorkManager;
 
     import androidx.appcompat.app.AppCompatActivity;
     import androidx.core.content.ContextCompat;
 
+    import com.example.loginscreen.ModelView.PlanHelper;
+    import com.example.loginscreen.R;
+    import com.example.loginscreen.Model.TouristObject;
+    import com.example.loginscreen.View.Firebase.Profile;
+    import com.example.loginscreen.View.LoginSignUp.LoginActivity;
     import com.google.android.material.bottomnavigation.BottomNavigationView;
     import com.google.firebase.auth.FirebaseAuth;
     import com.google.firebase.firestore.CollectionReference;
@@ -33,11 +35,9 @@
     import java.text.SimpleDateFormat;
     import java.util.ArrayList;
     import java.util.Calendar;
-    import java.util.HashMap;
     import java.util.Iterator;
     import java.util.List;
     import java.util.Locale;
-    import java.util.Map;
 
     public class Plan extends AppCompatActivity {
 
@@ -53,6 +53,8 @@
         private List<TouristObject> allObjects = new ArrayList<>();
         private Handler countdownHandler = new Handler();
         private Runnable countdownRunnable;
+        private final PlanHelper planHelper = new PlanHelper();
+
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,6 @@
             countdownTimer = findViewById(R.id.countdownTimer);
             visitDateButton = findViewById(R.id.visitDateButton);
 
-            // Custom adapter със зелен текст
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>()) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
@@ -87,12 +88,19 @@
             loadTouristObjects();
             loadPlanFromFirestore();
 
+
             searchAutoComplete.setOnItemClickListener((parent, view, position, id) -> {
                 String selectedName = adapter.getItem(position);
                 for (TouristObject obj : allObjects) {
                     if (obj.getName().equals(selectedName)) {
                         displayTouristObject(obj);  // Показваме обекта
-                        addToPlan(obj); // Добавяме обекта в план
+                        planHelper.addToPlan(this, obj, visitDateCalendar, () -> {
+                            saveVisitTimeToPreferences(visitDateCalendar.getTimeInMillis());
+                            saveLastPlannedObjectName(obj.getName());
+                            planHelper.updateVisitTime(this, obj.getName(), visitDateCalendar.getTimeInMillis()); // 👈 добави това
+                            startCountdownTimer();
+                        });
+
                         break;
                     }
                 }
@@ -100,8 +108,10 @@
 
             objectImage.setOnLongClickListener(v -> {
                 showDeleteDialog();
-                return true;  // Връщаме true, за да сигнализираме, че събитието е обработено
+                return true;
             });
+
+
 
             visitDateButton.setOnClickListener(v -> openDatePickerDialog());
 
@@ -130,7 +140,6 @@
                 return false;
             });
 
-            // Зареждаме времето за посещение от SharedPreferences
             SharedPreferences sharedPreferences = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
             long savedVisitTime = sharedPreferences.getLong("visitTime", -1);
 
@@ -142,57 +151,36 @@
 
 
         private void showDeleteDialog() {
-            // Създаваме нов диалогов прозорец с персонализирания изглед
             AlertDialog.Builder builder = new AlertDialog.Builder(Plan.this);
             LayoutInflater inflater = getLayoutInflater();
             View dialogView = inflater.inflate(R.layout.dialog_delete, null);
             builder.setView(dialogView);
 
-            // Вземаме бутоните от диалога
             Button btnYes = dialogView.findViewById(R.id.btnYes);
             Button btnNo = dialogView.findViewById(R.id.btnNo);
 
-            // Извеждаме заглавие на диалога
             TextView titleTextView = dialogView.findViewById(R.id.titleTextView);
             titleTextView.setText("Искате ли да изтриете този обект от плана?");
 
-            // Създаваме диалога
             AlertDialog alertDialog = builder.create();
 
-            // Слушатели за бутоните
             btnYes.setOnClickListener(v -> {
-                deleteTouristObjectFromPlan(); // Изтриваме обекта
-                alertDialog.dismiss();  // Затваряме диалога
+                planHelper.deleteObjectFromPlan(this, objectName.getText().toString(),
+                        () -> {
+                            stopCountdownTimer();
+                            clearPlanFromPreferences();
+                            removeObjectFromLocalList(objectName.getText().toString());
+                            resetObjectView();
+                        });
+                alertDialog.dismiss();
             });
+
 
             btnNo.setOnClickListener(v -> {
-                alertDialog.dismiss();  // Просто затваряме диалога, без да правим нищо
+                alertDialog.dismiss();
             });
 
-            // Показваме диалога
             alertDialog.show();
-        }
-        private void deleteTouristObjectFromPlan() {
-            String objectNameToDelete = objectName.getText().toString();
-
-            stopCountdownTimer();
-
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            CollectionReference planRef = firestore.collection("users").document(userId).collection("plan");
-
-            planRef.document(sanitizeForFirestoreId(objectNameToDelete)).delete()
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(Plan.this, "Обектът беше изтрит от плана.", Toast.LENGTH_SHORT).show();
-
-                        // 🆕 Изчистваме данните от SharedPreferences
-                        clearPlanFromPreferences();
-
-                        removeObjectFromLocalList(objectNameToDelete);
-                        resetObjectView();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(Plan.this, "Не успяхме да изтрием обекта.", Toast.LENGTH_SHORT).show();
-                    });
         }
 
         private void removeObjectFromLocalList(String objectNameToDelete) {
@@ -213,16 +201,12 @@
             adapter.notifyDataSetChanged();
         }
 
-
-
         private void resetObjectView() {
-            // Премахваме всички данни от изгледа
-            objectName.setText("");  // Изчистваме името на обекта
-            objectImage.setImageResource(R.drawable.default_image); // Връщаме на стандартната картинка
-            countdownTimer.setText(""); // Изчистваме таймера
+            objectName.setText("");
+            objectImage.setImageResource(R.drawable.default_image);
+            countdownTimer.setText("");
 
-            // Нулираме и времето на посещение
-            visitDateCalendar = null;  // Нулираме календарния обект
+            visitDateCalendar = null;
 
             Log.d("PlanDebug", "resetObjectView() извикан");
         }
@@ -306,10 +290,10 @@
                 if (imageResId != 0) {
                     objectImage.setImageResource(imageResId);
                 } else {
-                    objectImage.setImageResource(R.drawable.default_image); // резервно изображение
+                    objectImage.setImageResource(R.drawable.default_image);
                 }
             } else {
-                objectImage.setImageResource(R.drawable.default_image); // ако няма подадено изображение
+                objectImage.setImageResource(R.drawable.default_image);
             }
 
 
@@ -318,20 +302,20 @@
 
         private void openDatePickerDialog() {
             if (visitDateCalendar == null) {
-                visitDateCalendar = Calendar.getInstance(); // Инициализация
+                visitDateCalendar = Calendar.getInstance();
             }
             Calendar calendar = Calendar.getInstance();
             DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                    R.style.CustomDatePickerDialog, // Задай персонализирания стил тук
+                    R.style.CustomDatePickerDialog,
                     (view, year, monthOfYear, dayOfMonth) -> {
                         visitDateCalendar = Calendar.getInstance();
                         visitDateCalendar.set(year, monthOfYear, dayOfMonth);
                         String formattedDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(visitDateCalendar.getTime());
                         visitDateButton.setText("Посещение на: " + formattedDate);
 
-                        // Записваме времето за посещение в SharedPreferences
                         saveVisitTimeToPreferences(visitDateCalendar.getTimeInMillis());
-                        updateVisitTimeInFirestore(objectName.getText().toString(), visitDateCalendar.getTimeInMillis());
+                        planHelper.updateVisitTime(this, objectName.getText().toString(), visitDateCalendar.getTimeInMillis());
+
 
 
                         startCountdownTimer();
@@ -341,42 +325,6 @@
                     calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         }
-
-        private void addToPlan(TouristObject obj) {
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            CollectionReference planRef = firestore.collection("users").document(userId).collection("plan");
-
-            // Вземаме текущото време за посещение
-            if (visitDateCalendar == null) {
-                visitDateCalendar = Calendar.getInstance();
-            }
-
-            long visitTime = visitDateCalendar.getTimeInMillis();
-
-            // Създаваме обекта с данни
-            Map<String, Object> planData = new HashMap<>();
-            planData.put("name", obj.getName());
-            planData.put("image", obj.getImage());
-            planData.put("visitTime", visitTime);
-
-            // 🔒 Безопасно име за Firestore ID
-            String safeName = sanitizeForFirestoreId(obj.getName());
-            Log.d("FirestoreDebug", "Добавям в Plan с ID: " + safeName); // по избор
-
-            // Записваме обекта в Firestore
-            planRef.document(safeName)
-                    .set(planData)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(Plan.this, "Обектът е добавен в плана.", Toast.LENGTH_SHORT).show();
-                        saveVisitTimeToPreferences(visitTime);
-                        saveLastPlannedObjectName(obj.getName()); // 🆕// ⏱️ запазваме времето
-                        startCountdownTimer(); // стартираме таймер
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(Plan.this, "Не успяхме да добавим обекта в плана.", Toast.LENGTH_SHORT).show();
-                    });
-        }
-
         private void saveLastPlannedObjectName(String name) {
             SharedPreferences prefs = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
             prefs.edit().putString("lastPlannedObject", name).apply();
@@ -397,7 +345,7 @@
             CollectionReference planRef = firestore.collection("users").document(userId).collection("plan");
 
             if (targetName != null) {
-                String safeTargetName = sanitizeForFirestoreId(targetName); // ✅ добавено!
+                String safeTargetName = sanitizeForFirestoreId(targetName);
 
                 planRef.document(safeTargetName).get().addOnSuccessListener(document -> {
                     if (document.exists()) {
@@ -452,34 +400,32 @@
         protected void onPause() {
             super.onPause();
             if (countdownRunnable != null) {
-                countdownHandler.removeCallbacks(countdownRunnable);  // Спиране на таймера при напускане на екрана
+                countdownHandler.removeCallbacks(countdownRunnable);
             }
         }
 
         @Override
         protected void onResume() {
             super.onResume();
-            // Продължаваме таймера, ако има зададена дата на посещение
             if (visitDateCalendar != null) {
-                startCountdownTimer();  // Стартираме отново таймера
+                startCountdownTimer();
             }
         }
 
         @Override
         protected void onDestroy() {
             super.onDestroy();
-            // Спираме таймера, ако активността се унищожава
             if (countdownRunnable != null) {
-                countdownHandler.removeCallbacks(countdownRunnable);  // Спираме таймера
-                countdownRunnable = null;  // Изчистваме runnable
+                countdownHandler.removeCallbacks(countdownRunnable);
+                countdownRunnable = null;
             }
         }
 
         private void stopCountdownTimer() {
             if (countdownRunnable != null) {
-                countdownHandler.removeCallbacks(countdownRunnable);  // Премахваме текущия Runnable
-                countdownRunnable = null;  // Изчистваме runnable
-                countdownTimer.setText(""); // Изчистваме таймера от екрана
+                countdownHandler.removeCallbacks(countdownRunnable);
+                countdownRunnable = null;
+                countdownTimer.setText("");
             }
         }
 
@@ -494,27 +440,5 @@
                     .remove("lastPlannedObject")
                     .apply();
         }
-
-        private void updateVisitTimeInFirestore(String objectName, long visitTime) {
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            String safeName = sanitizeForFirestoreId(objectName);
-
-            firestore.collection("users")
-                    .document(userId)
-                    .collection("plan")
-                    .document(safeName)
-                    .update("visitTime", visitTime)
-                    .addOnSuccessListener(aVoid -> Log.d("Plan", "visitTime updated"))
-                    .addOnFailureListener(e -> Log.e("Plan", "Грешка при обновяване на visitTime: " + e.getMessage()));
-        }
-
-
-
-
-
-
-
-
-
 
     }

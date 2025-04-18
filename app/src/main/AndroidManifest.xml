@@ -17,8 +17,6 @@
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
 
 
-
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -32,12 +30,12 @@
 
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".View.LoginSignUp.LoginActivity"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
 
         <activity
-            android:name=".SignupActivity"
+            android:name=".View.LoginSignUp.SignupActivity"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
             <meta-data
@@ -46,7 +44,7 @@
 
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".View.MainActivity"
             android:exported="true">
 
             <meta-data
@@ -60,35 +58,35 @@
         </activity>
 
         <activity
-            android:name=".Wishlist"
+            android:name=".View.Wishlist"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
         <activity
-            android:name=".Friends"
+            android:name=".View.Friends"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
         <activity
-            android:name=".Profile"
+            android:name=".View.Firebase.Profile"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
         <activity
-            android:name=".EditProfile"
+            android:name=".View.EditProfile"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
-            android:name=".Notifications"
+            android:name=".View.Notifications"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity android:name=".BeenThere"
+        <activity android:name=".View.BeenThere"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity android:name=".Plan"
+        <activity android:name=".View.Plan"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity android:name=".Gallery"
+        <activity android:name=".View.Firebase.Gallery"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity android:name=".FullscreenImageActivity"
+        <activity android:name=".View.FullscreenImageActivity"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <provider

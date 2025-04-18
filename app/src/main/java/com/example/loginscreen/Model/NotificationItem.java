@@ -1,4 +1,4 @@
-package com.example.loginscreen;
+package com.example.loginscreen.Model;
 
 import com.google.firebase.firestore.ServerTimestamp;
 

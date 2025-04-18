@@ -1,4 +1,4 @@
-package com.example.loginscreen;
+package com.example.loginscreen.Model;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -10,7 +10,6 @@ public class TouristObject implements  Serializable{
     private String image;
     private long visitTime;
 
-    // Празен конструктор (задължителен за Firebase)
     public TouristObject() {
     }
 

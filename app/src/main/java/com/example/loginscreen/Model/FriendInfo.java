@@ -1,10 +1,10 @@
-package com.example.loginscreen;
+package com.example.loginscreen.Model;
 
 public class FriendInfo {
     private String username;
     private int stars;
 
-    public FriendInfo() {} // Празен за Firestore (ако се използва)
+    public FriendInfo() {}
 
     public FriendInfo(String username, int stars) {
         this.username = username;

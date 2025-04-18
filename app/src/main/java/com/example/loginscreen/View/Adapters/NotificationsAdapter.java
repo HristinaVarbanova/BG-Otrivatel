@@ -1,4 +1,4 @@
-package com.example.loginscreen;
+package com.example.loginscreen.View.Adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.loginscreen.Model.NotificationItem;
+import com.example.loginscreen.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -46,23 +48,16 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             holder.btnDecline.setVisibility(View.GONE);
             return;
         }
-
-        // 📝 Показваме текста на съобщението
         holder.textView.setText(notif.getMessage());
-
-        // 🐞 Лог за проверка в Logcat
         Log.d("NotifDebug", "TYPE: " + notif.getType() + ", STATUS: " + notif.getStatus());
 
-        // 👥 Приятелска покана
         if ("friend_request".equals(notif.getType())) {
             String status = notif.getStatus(); // може да е null
 
             if ("accepted".equals(status) || "declined".equals(status)) {
-                // Ако вече е отговорено – скриваме бутоните
                 holder.btnAccept.setVisibility(View.GONE);
                 holder.btnDecline.setVisibility(View.GONE);
             } else {
-                // Ако е pending или липсва – показваме бутоните
                 holder.btnAccept.setVisibility(View.VISIBLE);
                 holder.btnDecline.setVisibility(View.VISIBLE);
 
@@ -71,7 +66,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             }
 
         } else {
-            // 🌟 Всички други типове (например star_rivalry) — само текст, без бутони
             holder.btnAccept.setVisibility(View.GONE);
             holder.btnDecline.setVisibility(View.GONE);
         }
@@ -122,19 +116,15 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 friendData.put("username", friendUsername);
                 friendData.put("timestamp", System.currentTimeMillis());
 
-                // 🔁 Добавяме приятелство
                 db.collection("users").document(currentUid).collection("friends").document(friendUid)
                         .set(friendData)
                         .addOnSuccessListener(aVoid -> {
                             db.collection("users").document(friendUid).collection("friends").document(currentUid)
                                     .set(myData)
                                     .addOnSuccessListener(aVoid2 -> {
-                                        // 🗑 Изтриваме заявката
                                         db.collection("users").document(currentUid)
                                                 .collection("requests").document(friendUid)
                                                 .delete();
-
-                                        // ✅ Обновяваме текущата нотификация
                                         String message = "Вие приехте поканата на " + friendUsername;
                                         notif.setMessage(message);
                                         notif.setStatus("accepted");
@@ -149,7 +139,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                                                     }}, SetOptions.merge());
                                         }
 
-                                        // 🔔 Изпращаме потвърждение на другия
                                         NotificationItem confirm = new NotificationItem(
                                                 "friend_accept",
                                                 currentUsername,
@@ -180,12 +169,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         String currentUid = auth.getCurrentUser().getUid();
         String friendUid = notif.getFromUid();
 
-        // 🗑 Изтриваме заявката
         db.collection("users").document(currentUid)
                 .collection("requests").document(friendUid)
                 .delete();
 
-        // 🔁 Обновяваме съобщението
         String message = "Вие отказахте поканата на " + notif.getFrom();
         notif.setMessage(message);
         notif.setStatus("declined");

@@ -37,8 +37,6 @@ public class EditProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profile_activity);
-
-        // Firebase
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         helper = new EditProfileHelper(this);
@@ -53,9 +51,7 @@ public class EditProfile extends AppCompatActivity {
 
         initViews();
         loadUserData();
-
         btnSave.setOnClickListener(v -> saveUserData());
-
         btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(EditProfile.this, Profile.class);
             startActivity(intent);
@@ -144,7 +140,6 @@ public class EditProfile extends AppCompatActivity {
                                 Toast.makeText(EditProfile.this, "Профилът е актуализиран! Моля, влезте отново.", Toast.LENGTH_SHORT).show();
                                 redirectToLogin();
                             }
-
                             @Override
                             public void onFailure(String errorMessage) {
                                 Toast.makeText(EditProfile.this, errorMessage, Toast.LENGTH_LONG).show();

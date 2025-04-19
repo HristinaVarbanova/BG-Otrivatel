@@ -61,8 +61,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
         });
 
         holder.imageView.setOnLongClickListener(v -> {
-            Log.d("GalleryAdapter", "Long click detected!");
-
             if (longClickListener != null && imageData.getImageUrl() != null) {
                 longClickListener.onImageLongClick(holder.getAdapterPosition(), imageData.getImageUrl());
             }

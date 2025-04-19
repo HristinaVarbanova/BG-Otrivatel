@@ -137,13 +137,10 @@ public class BeenThere extends AppCompatActivity{
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_delete, null);
         builder.setView(dialogView);
-
         Button btnYes = dialogView.findViewById(R.id.btnYes);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
-
         TextView titleTextView = dialogView.findViewById(R.id.titleTextView);
         titleTextView.setText("Искате ли да изтриете обекта от посетени?");
-
         AlertDialog alertDialog = builder.create();
         btnYes.setOnClickListener(v -> {
             beenThereHelper.deleteObjectFromBeenThere(
@@ -155,12 +152,7 @@ public class BeenThere extends AppCompatActivity{
             );
             alertDialog.dismiss();
         });
-
-
-
         btnNo.setOnClickListener(v -> alertDialog.dismiss());
-
         alertDialog.show();
     }
-
 }

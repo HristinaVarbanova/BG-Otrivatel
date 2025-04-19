@@ -42,7 +42,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         NotificationItem notif = notifications.get(position);
         if (notif == null) {
-            holder.textView.setText("⚠️ Грешка при зареждане на известие.");
+            holder.textView.setText("Грешка при зареждане на известие.");
             holder.btnAccept.setVisibility(View.GONE);
             holder.btnDecline.setVisibility(View.GONE);
             return;

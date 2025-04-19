@@ -2,6 +2,7 @@ package com.example.loginscreen.View.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +60,9 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
             context.startActivity(intent);
         });
 
-        holder.itemView.setOnLongClickListener(v -> {
+        holder.imageView.setOnLongClickListener(v -> {
+            Log.d("GalleryAdapter", "Long click detected!");
+
             if (longClickListener != null && imageData.getImageUrl() != null) {
                 longClickListener.onImageLongClick(holder.getAdapterPosition(), imageData.getImageUrl());
             }

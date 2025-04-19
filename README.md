@@ -1,1 +1,1 @@
-# BG-Otrivatel
+# BG-Otkrivatel

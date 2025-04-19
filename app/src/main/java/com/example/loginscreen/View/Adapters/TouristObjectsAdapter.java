@@ -55,13 +55,11 @@
             } else {
                 holder.objectImage.setImageResource(R.drawable.default_image);
             }
-
             holder.itemView.setOnClickListener(v -> {
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClick(touristObject);
                 }
             });
-
             holder.itemView.setOnLongClickListener(v -> {
                 if (context instanceof Wishlist) {
                     Options optionsDialog = Options.newInstance(touristObject);
@@ -69,12 +67,8 @@
                 } else if (context instanceof BeenThere) {
                     ((BeenThere) context).showDeleteDialog(touristObject);
                 }
-
                 return true;
             });
-
-
-
         }
 
         @Override

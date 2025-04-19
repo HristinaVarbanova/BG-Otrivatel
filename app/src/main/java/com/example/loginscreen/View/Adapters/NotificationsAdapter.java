@@ -41,7 +41,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         NotificationItem notif = notifications.get(position);
-
         if (notif == null) {
             holder.textView.setText("⚠️ Грешка при зареждане на известие.");
             holder.btnAccept.setVisibility(View.GONE);
@@ -50,10 +49,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
         holder.textView.setText(notif.getMessage());
         Log.d("NotifDebug", "TYPE: " + notif.getType() + ", STATUS: " + notif.getStatus());
-
         if ("friend_request".equals(notif.getType())) {
-            String status = notif.getStatus(); // може да е null
-
+            String status = notif.getStatus();
             if ("accepted".equals(status) || "declined".equals(status)) {
                 holder.btnAccept.setVisibility(View.GONE);
                 holder.btnDecline.setVisibility(View.GONE);
@@ -64,7 +61,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 holder.btnAccept.setOnClickListener(v -> acceptFriendRequest(notif, position));
                 holder.btnDecline.setOnClickListener(v -> declineFriendRequest(notif, position));
             }
-
         } else {
             holder.btnAccept.setVisibility(View.GONE);
             holder.btnDecline.setVisibility(View.GONE);

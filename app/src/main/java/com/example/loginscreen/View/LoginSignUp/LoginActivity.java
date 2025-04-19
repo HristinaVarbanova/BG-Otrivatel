@@ -28,21 +28,17 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         auth = FirebaseAuth.getInstance();
-
         loginEmail = findViewById(R.id.login_username);
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
         signupRedirectText = findViewById(R.id.signupRedirectText);
-
         loginButton.setOnClickListener(view -> {
             if (!validateEmail() || !validatePassword()) {
                 return;
             }
             checkUser();
         });
-
         signupRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,11 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (user != null) {
                             String uid = user.getUid();
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                            //Map<String, Object> emptyData = new HashMap<>();
-
                             Toast.makeText(this, "Успешен вход!", Toast.LENGTH_SHORT).show();
-
                             startActivity(new Intent(this, MainActivity.class));
                             finish();
                         }
@@ -102,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }
 
 

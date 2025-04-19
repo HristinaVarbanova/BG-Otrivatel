@@ -142,7 +142,7 @@ public class BeenThere extends AppCompatActivity{
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
         TextView titleTextView = dialogView.findViewById(R.id.titleTextView);
-        titleTextView.setText("Искате ли да изтриете обекта от BeenThere?");
+        titleTextView.setText("Искате ли да изтриете обекта от посетени?");
 
         AlertDialog alertDialog = builder.create();
         btnYes.setOnClickListener(v -> {

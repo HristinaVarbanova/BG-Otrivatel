@@ -86,15 +86,12 @@ public class GalleryHelper {
                 .getReference("user-photos")
                 .child(userId)
                 .child(fileName);
-
         Uri fileUri = Uri.fromFile(imageFile);
-
         storageRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl()
                         .addOnSuccessListener(downloadUri -> {
                             String imageUrl = downloadUri.toString();
                             Log.d("UPLOAD", "Качено: " + imageUrl);
-
                             Map<String, Object> photoData = new HashMap<>();
                             photoData.put("uid", userId);
                             photoData.put("url", imageUrl);

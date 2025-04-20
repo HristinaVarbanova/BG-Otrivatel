@@ -57,7 +57,7 @@ public class BeenThereHelper {
                 .addOnSuccessListener(aVoid -> {
                     visitedObjects.remove(touristObject);
                     adapter.notifyDataSetChanged();
-                    updateStarsCallback.run(); // Извиква се метод от BeenThere
+                    updateStarsCallback.run(); 
                     Toast.makeText(context, "Обектът е изтрит успешно.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e ->

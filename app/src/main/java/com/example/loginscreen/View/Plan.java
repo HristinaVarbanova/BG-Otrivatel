@@ -154,15 +154,11 @@
             LayoutInflater inflater = getLayoutInflater();
             View dialogView = inflater.inflate(R.layout.dialog_delete, null);
             builder.setView(dialogView);
-
             Button btnYes = dialogView.findViewById(R.id.btnYes);
             Button btnNo = dialogView.findViewById(R.id.btnNo);
-
             TextView titleTextView = dialogView.findViewById(R.id.titleTextView);
             titleTextView.setText("Искате ли да изтриете този обект от плана?");
-
             AlertDialog alertDialog = builder.create();
-
             btnYes.setOnClickListener(v -> {
                 planHelper.deleteObjectFromPlan(this, objectName.getText().toString(),
                         () -> {
@@ -173,12 +169,9 @@
                         });
                 alertDialog.dismiss();
             });
-
-
             btnNo.setOnClickListener(v -> {
                 alertDialog.dismiss();
             });
-
             alertDialog.show();
         }
 
@@ -190,7 +183,6 @@
                     break;
                 }
             }
-
             List<String> names = new ArrayList<>();
             for (TouristObject obj : allObjects) {
                 names.add(obj.getName());
@@ -204,13 +196,9 @@
             objectName.setText("");
             objectImage.setImageResource(R.drawable.default_image);
             countdownTimer.setText("");
-
             visitDateCalendar = null;
-
             Log.d("PlanDebug", "resetObjectView() извикан");
         }
-
-
 
         private void saveVisitTimeToPreferences(long visitTime) {
             SharedPreferences sharedPreferences = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
@@ -223,36 +211,30 @@
         private void startCountdownTimer() {
             if (visitDateCalendar == null) {
                 countdownTimer.setText("Не е избрана дата за посещение");
-                return; // Ако няма избрана дата, просто излизаме от метода
+                return; 
             }
-
             if (countdownRunnable != null) {
                 countdownHandler.removeCallbacks(countdownRunnable);
             }
-
             countdownRunnable = new Runnable() {
                 @Override
                 public void run() {
                     long currentTime = System.currentTimeMillis();
-                    long visitTime = visitDateCalendar.getTimeInMillis(); // Вземаме инициализираното време
+                    long visitTime = visitDateCalendar.getTimeInMillis(); 
                     long timeRemaining = visitTime - currentTime;
-
                     if (timeRemaining > 0) {
                         long days = timeRemaining / (1000 * 60 * 60 * 24);
                         long hours = (timeRemaining / (1000 * 60 * 60)) % 24;
                         long minutes = (timeRemaining / (1000 * 60)) % 60;
                         long seconds = (timeRemaining / 1000) % 60;
-
                         String time = String.format("%dд %02d:%02d:%02d", days, hours, minutes, seconds);
                         countdownTimer.setText(time);
-
                         countdownHandler.postDelayed(this, 1000);
                     } else {
                         countdownTimer.setText("Времето изтече!");
                     }
                 }
             };
-
             countdownHandler.post(countdownRunnable);
         }
 
@@ -282,10 +264,8 @@
 
         private void displayTouristObject(TouristObject obj) {
             objectName.setText(obj.getName());
-
             if (obj.getImage() != null && !obj.getImage().isEmpty()) {
                 int imageResId = getResources().getIdentifier(obj.getImage(), "drawable", getPackageName());
-
                 if (imageResId != 0) {
                     objectImage.setImageResource(imageResId);
                 } else {
@@ -294,8 +274,6 @@
             } else {
                 objectImage.setImageResource(R.drawable.default_image);
             }
-
-
             startCountdownTimer();
         }
 
@@ -311,12 +289,8 @@
                         visitDateCalendar.set(year, monthOfYear, dayOfMonth);
                         String formattedDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(visitDateCalendar.getTime());
                         visitDateButton.setText("Посещение на: " + formattedDate);
-
                         saveVisitTimeToPreferences(visitDateCalendar.getTimeInMillis());
                         planHelper.updateVisitTime(this, objectName.getText().toString(), visitDateCalendar.getTimeInMillis());
-
-
-
                         startCountdownTimer();
                     },
                     calendar.get(Calendar.YEAR),
@@ -333,25 +307,19 @@
         private void loadPlanFromFirestore() {
             String targetName = getIntent().getStringExtra("objectName");
             long passedVisitTime = getIntent().getLongExtra("visitTime", -1);
-
-
             if (targetName == null) {
                 SharedPreferences prefs = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
                 targetName = prefs.getString("lastPlannedObject", null);
             }
-
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             CollectionReference planRef = firestore.collection("users").document(userId).collection("plan");
-
             if (targetName != null) {
                 String safeTargetName = sanitizeForFirestoreId(targetName);
-
                 planRef.document(safeTargetName).get().addOnSuccessListener(document -> {
                     if (document.exists()) {
                         TouristObject obj = document.toObject(TouristObject.class);
                         if (obj != null) {
                             obj.setName(document.getId());
-
                             if (passedVisitTime > 0) {
                                 visitDateCalendar = Calendar.getInstance();
                                 visitDateCalendar.setTimeInMillis(passedVisitTime);
@@ -361,7 +329,6 @@
                                 visitDateCalendar.setTimeInMillis(obj.getVisitTime());
                                 saveVisitTimeToPreferences(obj.getVisitTime());
                             }
-
                             displayTouristObject(obj);
                         }
                     } else {
@@ -382,7 +349,6 @@
                                 visitDateCalendar.setTimeInMillis(obj.getVisitTime());
                                 saveVisitTimeToPreferences(obj.getVisitTime());
                             }
-
                             displayTouristObject(obj);
                             return;
                         }

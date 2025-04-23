@@ -64,7 +64,7 @@
             touristObjectsRef = firestore.collection("TouristObjects");
 
             if (visitDateCalendar == null) {
-                visitDateCalendar = Calendar.getInstance(); // Инициализация, ако е null
+                visitDateCalendar = Calendar.getInstance(); 
             }
 
             searchAutoComplete = findViewById(R.id.searchAutoComplete);
@@ -96,7 +96,7 @@
                         planHelper.addToPlan(this, obj, visitDateCalendar, () -> {
                             saveVisitTimeToPreferences(visitDateCalendar.getTimeInMillis());
                             saveLastPlannedObjectName(obj.getName());
-                            planHelper.updateVisitTime(this, obj.getName(), visitDateCalendar.getTimeInMillis()); // 👈 добави това
+                            planHelper.updateVisitTime(this, obj.getName(), visitDateCalendar.getTimeInMillis());
                             startCountdownTimer();
                         });
 
@@ -143,8 +143,8 @@
             long savedVisitTime = sharedPreferences.getLong("visitTime", -1);
 
             if (savedVisitTime != -1) {
-                visitDateCalendar.setTimeInMillis(savedVisitTime);  // Възстановяваме времето от SharedPreferences
-                startCountdownTimer();  // Стартираме таймера с възстановеното време
+                visitDateCalendar.setTimeInMillis(savedVisitTime);  
+                startCountdownTimer(); 
             }
         }
 
